@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>서울청년센터 광진 · 역량진단</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --coral: #E85D4C;
+    --coral-dark: #C4432F;
+    --navy: #2F3C7E;
+    --navy-dark: #1F2A5C;
+    --gold: #D9A441;
+    --cream: #FDF6EE;
+    --card: #FFFFFF;
+    --text: #2B2B2B;
+    --text-mute: #6B6B6B;
+    --border: #EAE1D6;
+    --green: #3E8E5A;
+    --amber: #C9922E;
+    --red: #C4432F;
+    --bg: var(--cream);
+    --heading: var(--navy);
+    --role-selected-bg: #FCEFEC;
+    --role-selected-text: #C4432F;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1B1E2A;
+      --card: #262B3D;
+      --text: #ECEAF5;
+      --text-mute: #A8ACC2;
+      --border: #383F55;
+      --cream: #232739;
+      --heading: #AFC0F5;
+      --role-selected-bg: #3A2B29;
+      --role-selected-text: #F3A794;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1B1E2A;
+    --card: #262B3D;
+    --text: #ECEAF5;
+    --text-mute: #A8ACC2;
+    --border: #383F55;
+    --cream: #232739;
+    --heading: #AFC0F5;
+    --role-selected-bg: #3A2B29;
+    --role-selected-text: #F3A794;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  #app { max-width: 820px; margin: 0 auto; padding: 28px 20px 60px; min-height: 100%; }
+  .brand { font-size: 13px; color: var(--text-mute); letter-spacing: 0.02em; margin-bottom: 6px; }
+  h1 { font-family: inherit; font-weight: 900; letter-spacing: -0.01em; font-size: 28px; margin: 0 0 10px; color: var(--heading); line-height: 1.3; }
+  h2 { font-size: 19px; margin: 0 0 4px; color: var(--heading); }
+  h3 { font-size: 15px; margin: 18px 0 8px; color: var(--text); }
+  p { margin: 0 0 14px; color: var(--text); }
+  .muted { color: var(--text-mute); font-size: 14px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin-bottom: 16px; }
+  .btn { display: inline-block; background: var(--coral); color: #fff; border: none; border-radius: 10px; padding: 13px 22px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn:active { background: var(--coral-dark); }
+  .btn.secondary { background: transparent; color: var(--heading); border: 1.5px solid var(--heading); }
+  .btn.small { padding: 8px 14px; font-size: 13px; border-radius: 8px; }
+  .btn.ghost { background: transparent; color: var(--text-mute); border: none; text-decoration: underline; padding: 6px; font-size: 13px; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row.between { justify-content: space-between; align-items: center; }
+  input[type=text], select {
+    width: 100%; padding: 13px 14px; border-radius: 10px; border: 1.5px solid var(--border);
+    font-size: 15px; font-family: inherit; background: var(--card); color: var(--text);
+  }
+  .fieldGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 480px) { .fieldGrid { grid-template-columns: 1fr; } }
+  .roleGrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 14px 0 22px; }
+  @media (max-width: 520px) { .roleGrid { grid-template-columns: 1fr; } }
+  .accordionWrap { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--card); }
+  .accordionToggle {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    padding: 13px 14px; background: var(--card); border: none; cursor: pointer;
+    font-family: inherit; font-size: 15px; color: var(--text); font-weight: 700;
+  }
+  .accordionValue { font-weight: 400; color: var(--text-mute); font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  .accordionArrow { font-size: 11px; color: var(--coral); }
+  .accordionPanel { border-top: 1.5px solid var(--border); }
+  .accordionOption {
+    padding: 13px 16px; cursor: pointer; font-size: 14.5px; color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .accordionOption:last-child { border-bottom: none; }
+  .accordionOption.selected { background: var(--role-selected-bg); color: var(--role-selected-text); font-weight: 700; }
+  .quickNavTitle { text-align: center; font-size: 13px; font-weight: 700; color: var(--text-mute); margin: 26px 0 10px; letter-spacing: 0.02em; }
+  .quickNav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quickNavBtn {
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px;
+    background: var(--card); border: 1.5px solid var(--border); border-radius: 14px;
+    padding: 18px 10px 14px; cursor: pointer; font-family: inherit;
+    border-top: 4px solid var(--qc, var(--navy));
+  }
+  .quickNavBtn:active { background: var(--cream); }
+  .quickNavIcon { font-size: 26px; line-height: 1; margin-bottom: 4px; }
+  .quickNavLabel { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .quickNavSub { font-size: 11.5px; color: var(--qc, var(--text-mute)); font-weight: 700; }
+  .roleCard {
+    border: 1.5px solid var(--border); border-radius: 12px; padding: 16px 10px; text-align: center;
+    cursor: pointer; background: var(--card); font-weight: 700; color: var(--text); font-size: 15px;
+  }
+  .roleCard.selected { border-color: var(--coral); background: var(--role-selected-bg); color: var(--role-selected-text); }
+  .progressWrap { background: var(--border); border-radius: 8px; height: 8px; overflow: hidden; margin: 4px 0 22px; }
+  .progressBar { background: var(--coral); height: 100%; border-radius: 8px; transition: width .25s ease; }
+  .stepLabel { font-size: 13px; color: var(--text-mute); margin-bottom: 4px; }
+  .item { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .item:last-child { border-bottom: none; }
+  .itemSub { font-size: 12.5px; color: var(--coral-dark); font-weight: 700; margin-bottom: 4px; letter-spacing: 0.01em; }
+  .itemText { font-size: 15.5px; margin-bottom: 14px; color: var(--text); }
+  .scaleGroup { margin-bottom: 10px; }
+  .scaleLabel { font-size: 12px; font-weight: 700; color: var(--text-mute); margin-bottom: 6px; }
+  .scale { display: flex; gap: 6px; }
+  .scaleBtn {
+    flex: 1; padding: 9px 3px; text-align: center; border-radius: 9px; border: 1.5px solid var(--border);
+    background: var(--card); cursor: pointer; font-size: 11px; color: var(--text-mute); font-family: inherit; line-height: 1.25;
+    white-space: nowrap;
+  }
+  .scaleBtn .num { display: block; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 1px; }
+  .scaleBtn.selected.level { border-color: var(--navy); background: var(--navy); }
+  .scaleBtn.selected.importance { border-color: var(--gold); background: var(--gold); }
+  .scaleBtn.selected, .scaleBtn.selected .num { color: #fff; }
+  @media (max-width: 520px) {
+    .scale { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .scaleBtn {
+      display: flex; align-items: center; justify-content: flex-start; gap: 7px;
+      padding: 11px 12px; font-size: 13px; white-space: nowrap;
+    }
+    .scaleBtn .num {
+      display: inline-flex; align-items: center; justify-content: center; flex: none;
+      width: 22px; height: 22px; border-radius: 999px; background: var(--border);
+      font-size: 12.5px; margin-bottom: 0; color: var(--text);
+    }
+    .scaleBtn.selected .num { background: rgba(255,255,255,0.28); color: #fff; }
+    .scale .scaleBtn:last-child { grid-column: 1 / -1; justify-content: center; }
+  }
+  .navRow { display: flex; justify-content: space-between; margin-top: 22px; align-items: center; }
+  .factorBar { margin-bottom: 16px; }
+  .factorBarTop { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+  .factorBarName { font-weight: 700; }
+  .factorTrack { background: var(--border); border-radius: 6px; height: 12px; overflow: hidden; position: relative; }
+  .factorFill { height: 100%; border-radius: 6px; }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; margin-left: 6px; }
+  .tag.dev { background: #FCE4E4; color: var(--red); }
+  .tag.ok { background: #E2EFDA; color: var(--green); }
+  .tag.mid { background: #FFF2CC; color: var(--amber); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-mute); font-weight: 700; font-size: 12.5px; }
+  .footer { text-align: center; margin-top: 30px; }
+  .banner { background: #FFF2CC; color: #6B5518; border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 18px; }
+  .center { text-align: center; }
+  .bigNum { font-family: inherit; font-size: 42px; font-weight: 900; color: var(--heading); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 12.5px; }
+  .legendItem { display: flex; align-items: center; gap: 6px; }
+  .legendSwatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .chartWrap { overflow-x: auto; }
+  .navTabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .navTab { padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--card); font-size: 13px; font-weight: 700; color: var(--text-mute); cursor: pointer; }
+  .navTab.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ================= 데이터: 서울청년센터 광진 자체 역량모델 =================
+const COMMON = [
+  { key:'A', title:'청년중심성', items:[
+    ['청년이해','나는 청년의 문제를 개인의 능력이나 태도만으로 판단하지 않고 그가 처한 사회·경제적 환경을 함께 고려한다.'],
+    ['청년감수성','나는 청년이 직접 표현하지 않은 불편이나 어려움도 세심하게 살피려고 한다.'],
+    ['다양성·개별성 존중','나는 같은 문제를 가진 청년이라도 상황과 필요한 지원이 서로 다를 수 있음을 고려한다.'],
+    ['자기결정 존중','나는 청년에게 내가 생각하는 최선의 방법을 강요하기보다 스스로 선택할 수 있도록 필요한 정보를 제공한다.'],
+    ['수요자 관점','나는 센터의 서비스나 프로그램을 청년의 입장에서 생각해 보고 불편한 점이나 개선할 점을 찾으려고 한다.'],
+  ]},
+  { key:'B', title:'소통·관계형성', items:[
+    ['경청·공감','나는 청년이나 동료의 말을 충분히 들은 후 나의 의견이나 판단을 제시한다.'],
+    ['명확한 의사표현','나는 복잡한 정책이나 업무 내용을 언어·비언어적 표현으로 효과적으로 전달한다.'],
+    ['관계형성·신뢰구축','나는 청년·동료·협력기관과의 약속과 업무상 합의를 일관되게 지킨다.'],
+    ['갈등관리','나는 의견이 다른 상황에서도 개인적인 감정과 업무상 쟁점을 구분하여 해결방안을 찾는다.'],
+    ['협업·팀워크','나는 공동의 목표를 달성하기 위해 나의 역할에 책임을 다하고 필요한 경우 동료의 업무를 지원하거나 역할을 조정한다.'],
+  ]},
+  { key:'C', title:'문제해결·판단', items:[
+    ['문제인식·분석','나는 문제가 발생했을 때 현상과 실제 원인을 구분하여 파악하려고 한다.'],
+    ['우선순위 판단','나는 문제가 발생하면 중요도와 긴급성, 청년과 조직에 미치는 영향을 고려하여 처리 순서를 결정한다.'],
+    ['대안탐색','나는 문제를 해결할 때 기존 방식 외에도 다른 해결방법을 찾아본다.'],
+    ['의사결정','나는 여러 대안을 비교한 후 실행 가능성과 예상되는 결과를 고려하여 결정한다.'],
+    ['실행·개선','나는 문제를 적합한 해결 방법으로 해결한 후 그 결과를 확인하고 동일한 문제가 반복되지 않도록 개선한다.'],
+  ]},
+  { key:'D', title:'공공성·책무성', items:[
+    ['책임감','나는 맡은 업무를 정해진 기한 내에 완료하고 필요한 후속조치까지 확인한다.'],
+    ['공공성·윤리의식','나는 개인적인 편의나 관계보다 청년과 기관의 공적 목적을 우선하여 업무를 판단한다.'],
+    ['규정·절차 준수','나는 중요한 업무를 처리하기 전에 관련 법령·지침·기관규정을 확인한다.'],
+    ['공정성·투명성','나는 사업과 서비스 제공 과정에서 동일한 기준을 일관되게 적용하려고 한다.'],
+    ['개인정보·이용자 보호','나는 상담이나 사업 과정에서 알게 된 청년의 개인정보와 민감한 정보를 철저히 보호한다.'],
+  ]},
+  { key:'E', title:'학습·혁신·변화대응', items:[
+    ['자기인식·자기성찰','나는 나의 강점과 한계를 파악하고 업무 결과와 피드백을 바탕으로 개선할 점을 구체적으로 파악한다.'],
+    ['지속적 학습','나는 업무에 필요한 새로운 정책·정보·지식을 스스로 찾아 학습한다.'],
+    ['변화적응','나는 청년정책이나 조직의 변화가 있을 때 변화의 이유를 이해하고 업무방식을 조정한다.'],
+    ['업무혁신','나는 업무에 더 나은 방법을 찾아 개선한다.'],
+    ['디지털·AI 활용','나는 디지털 도구나 AI를 업무 목적에 맞게 활용하여 업무의 효율성과 결과의 질을 높인다.'],
+  ]},
+];
+
+const JOB = [
+  { key:'F', title:'청년·정책·지역 분석', items:[
+    ['청년·지역 특성 분석','나는 담당업무와 관련된 지역 청년의 특성과 주요 이슈를 파악하여 업무에 활용한다.'],
+    ['정책·제도 이해','나는 중앙정부·서울시·광진구의 청년정책과 제도의 변경사항을 확인하여 업무에 반영한다.'],
+    ['지역자원 탐색','나는 청년에게 필요한 지역기관과 지원자원의 내용·이용조건을 파악하여 적절한 자원을 찾아낼 수 있다.'],
+    ['정보·욕구·트렌드 분석','나는 상담·설문·프로그램 참여자료 등 다양한 자료를 활용하여 청년의 욕구와 변화를 파악하고 업무에 반영한다.'],
+  ]},
+  { key:'G', title:'청년지원·상담·서비스 설계', items:[
+    ['상담·욕구사정','나는 청년의 표면적인 요구뿐 아니라 그 요구가 발생한 배경과 상황을 함께 파악한다.'],
+    ['정책·서비스 탐색','나는 청년의 상황에 적합한 정책·서비스를 탐색하고 대상조건과 지원내용을 확인하여 정확하게 안내한다.'],
+    ['자원연계','나는 청년의 복합적인 욕구에 대응하기 위해 여러 정책이나 지역자원을 연계하는 방안을 검토한다.'],
+    ['서비스 설계','나는 청년에게 맞는 서비스를 설계하고 운영한다.'],
+    ['사례·사후관리','나는 서비스를 지원하고 청년의 변화와 추가적인 욕구를 확인하고 필요한 경우 지원방법을 조정한다.'],
+  ]},
+  { key:'H', title:'사업기획·운영·성과관리', items:[
+    ['사업기획·목표설정','나는 사업을 기획할 때 해결하고자 하는 청년문제와 사업의 필요성을 구체적으로 정의한다.'],
+    ['사업설계','나는 사업목표·대상·프로그램·예산·일정이 서로 논리적으로 연결되도록 사업을 설계한다.'],
+    ['실행·자원·위험관리','나는 사업을 운영하면서 발생할 수 있는 문제와 위험요인을 사전에 파악하고 대응방안을 준비한다.'],
+    ['성과평가','나는 기획에 따른 성과 달성을 분석하고 평가한다.'],
+    ['환류·사업고도화','나는 사업평가 결과를 분석하여 다음 사업의 내용이나 운영방식을 실제로 개선한다.'],
+  ]},
+  { key:'I', title:'지역협력·네트워크', items:[
+    ['지역자원·기관 발굴','나는 기존 협력기관 외에도 청년에게 도움이 될 수 있는 새로운 지역기관과 자원을 지속적으로 탐색한다.'],
+    ['이해관계자 분석·관계관리','나는 협력기관의 역할과 관심, 요구를 파악한 후 적절한 협력방식을 설계한다.'],
+    ['공동사업·자원연계','나는 여러 기관의 자원과 전문성을 결합하여 청년에게 필요한 공동사업이나 서비스를 제안한다.'],
+    ['협력조정·네트워크 고도화','나는 협력과정에서 기관 간 의견이나 역할의 차이가 발생하면 공동의 목표를 중심으로 조정한다.'],
+  ]},
+  { key:'J', title:'조직·행정·홍보·현장운영', items:[
+    ['공공행정·문서관리','나는 사업목적과 관련 규정을 고려하여 필요한 행정절차와 문서를 적시에 처리한다.'],
+    ['예산·회계·자원관리','나는 사업목적과 예산기준에 따라 예산을 집행하고 증빙자료를 정확하게 관리한다.'],
+    ['홍보·콘텐츠·정보전달','나는 사업의 대상과 특성에 맞는 콘텐츠를 제작하고 홍보채널을 선택하여 효과적으로 정보를 전달한다.'],
+    ['민원 대응','나는 공간 이용 중 발생하는 문제나 민원처리 매뉴얼을 숙지하고 있고 신속히 대응한다.'],
+    ['공간·시설·안전관리','나는 청년이 이용하는 공간과 시설에서 발생할 수 있는 불편이나 안전요인을 사전에 확인하고 개선한다.'],
+  ]},
+];
+
+const ROLE = {
+  '매니저': [
+    { key:'M1', title:'담당업무 전문수행', items:[
+      ['담당업무 전문수행','나는 담당사업의 목적과 성과기준을 이해하고 필요한 업무를 스스로 계획하여 수행한다.'],
+      ['담당업무 전문수행','나는 담당업무에서 발생하는 일반적인 문제를 스스로 해결하려고 하며 필요한 경우 적절한 도움을 요청한다.'],
+    ]},
+    { key:'M2', title:'자기주도적 업무관리', items:[
+      ['자기주도적 업무관리','나는 업무의 우선순위와 일정을 스스로 관리하여 업무가 지연되지 않도록 한다.'],
+      ['자기주도적 업무관리','나는 맡은 업무 외에도 사업목표 달성을 위해 필요한 일을 발견하면 스스로 제안하고 실행한다.'],
+    ]},
+    { key:'M3', title:'현장대응·실행력', items:[
+      ['현장대응·실행력','나는 프로그램이나 상담 과정에서 예상하지 못한 상황이 발생해도 상황에 맞게 대응한다.'],
+      ['현장대응·실행력','나는 계획과 실제 현장 상황에 차이가 있을 때 사업목적을 해치지 않는 범위에서 운영방식을 조정한다.'],
+    ]},
+    { key:'M4', title:'직무전문성 개발', items:[
+      ['직무전문성 개발','나는 담당업무의 전문성을 높이기 위해 관련 정책·사례·교육을 지속적으로 학습한다.'],
+      ['직무전문성 개발','나는 새롭게 습득한 지식이나 방법을 담당업무에 실제로 적용한다.'],
+    ]},
+  ],
+  '선임매니저': [
+    { key:'S1', title:'사업조정·통합관리', items:[
+      ['사업조정·통합관리','나는 담당자별 사업 진행상황을 파악하고 사업 간 일정·역할의 충돌이나 누락을 조정한다.'],
+      ['사업조정·통합관리','나는 개별 사업의 성과가 센터의 전체 목표와 연결되도록 사업 간 우선순위와 협업을 조정한다.'],
+    ]},
+    { key:'S2', title:'관리자 신뢰·공정성', items:[
+      ['관리자 신뢰·공정성','나는 직원에게 일관되고 공정한 기준으로 업무를 배분하고 관리한다.'],
+      ['관리자 신뢰·공정성','나는 직원의 업무나 요청에 대해 처리기준과 일정을 명확히 안내하여 관리자로서 신뢰를 형성한다.'],
+    ]},
+    { key:'S3', title:'코칭·슈퍼비전', items:[
+      ['코칭·슈퍼비전','나는 직원에게 답을 대신 제시하기보다 스스로 해결할 수 있도록 질문과 피드백을 제공한다.'],
+      ['코칭·슈퍼비전','나는 직원의 업무수행을 점검하고 필요한 경우 구체적인 개선방향과 지원방법을 제시한다.'],
+    ]},
+    { key:'S4', title:'성과·품질관리', items:[
+      ['성과·품질관리','나는 직원의 사업성과를 단순한 실적 수치가 아니라 사업목표 달성 여부와 연계하여 점검한다.'],
+      ['성과·품질관리','나는 사업이나 업무의 미흡한 부분에 대해 원인을 파악하고 담당자가 개선할 수 있도록 지원한다.'],
+    ]},
+    { key:'S5', title:'갈등·조직관리', items:[
+      ['갈등·조직관리','나는 직원 간 의견충돌이 발생했을 때 각자의 입장과 사실관계를 구분하여 핵심 쟁점을 정리한다.'],
+      ['갈등·조직관리','나는 갈등을 개인의 문제로만 판단하지 않고 업무구조와 조직환경을 함께 살펴 해결방안을 찾는다.'],
+    ]},
+    { key:'S6', title:'의사결정·상급자 지원', items:[
+      ['의사결정·상급자 지원','나는 현장의 다양한 정보를 종합하여 상급자가 판단할 수 있도록 핵심내용과 대안을 정리하여 보고한다.'],
+      ['의사결정·상급자 지원','나는 상급자의 지시를 단순히 전달하는 데 그치지 않고 현장여건을 고려한 실행방안을 제안한다.'],
+    ]},
+  ],
+  '센터장': [
+    { key:'C1', title:'전략적 사고·방향설정', items:[
+      ['전략적 사고·방향설정','나는 지역 청년의 변화와 정책환경을 분석하여 센터가 앞으로 집중해야 할 사업과 역할을 판단한다.'],
+      ['전략적 사고·방향설정','나는 개별사업의 실적보다 센터의 미션과 중장기 전략에 미치는 영향을 고려하여 사업의 우선순위를 결정한다.'],
+    ]},
+    { key:'C2', title:'조직·인사관리', items:[
+      ['조직·인사관리','나는 직원의 역할과 역량을 고려하여 인력과 업무를 적절하게 배치한다.'],
+      ['조직·인사관리','나는 직원평가 결과를 교육·코칭·직무배치 등 직원의 성장과 조직성과로 연결한다.'],
+    ]},
+    { key:'C3', title:'리더십·갈등관리', items:[
+      ['리더십·갈등관리','나는 조직 내 서로 다른 의견을 조정하면서도 최종적으로 조직이 나아갈 방향을 명확하게 제시한다.'],
+      ['리더십·갈등관리','나는 직원이 조직의 목표와 변화 필요성을 이해하고 자발적으로 참여할 수 있도록 동기를 부여한다.'],
+    ]},
+    { key:'C4', title:'대외협력·기관대표', items:[
+      ['대외협력·기관대표','나는 서울시·광진구·법인·지역기관·대학 등 주요 이해관계자의 요구와 관점을 고려하여 전략적인 협력관계를 구축한다.'],
+      ['대외협력·기관대표','나는 외부 협력을 센터의 청년지원 성과와 지역사회 가치로 연결할 수 있는 방안을 제시한다.'],
+    ]},
+    { key:'C5', title:'전략적 의사결정·책임', items:[
+      ['전략적 의사결정·책임','나는 정보가 충분하지 않거나 이해관계가 충돌하는 상황에서도 조직 전체의 관점에서 필요한 결정을 내린다.'],
+      ['전략적 의사결정·책임','나는 중요한 의사결정의 결과에 대해 책임지고 필요한 후속조치를 끝까지 관리한다.'],
+    ]},
+    { key:'C6', title:'조직성과·공공가치', items:[
+      ['조직성과·공공가치','나는 사업실적뿐 아니라 청년에게 실제로 발생한 변화와 지역사회에 미친 영향을 기관성과의 중요한 기준으로 삼는다.'],
+      ['조직성과·공공가치','나는 센터의 사업성과가 광진 지역의 청년정책과 지역사회에 어떤 공공적 가치를 만드는지 지속적으로 점검한다.'],
+    ]},
+  ],
+};
+
+const TEAM_NAMES = ['서울청년센터 광진', '청년도전지원사업'];
+
+const LEVEL_LABELS = ['기초수행','응용수행','독립수행','숙련수행','전문수행'];
+const LEVEL_CRITERIA = [
+  '매뉴얼과 지침에 따라 수행할 수 있다.',
+  '배운 내용을 상황에 적용해 수행한다.',
+  '도움 없이 스스로 판단해 수행한다.',
+  '다양한 상황에서 능숙하게 조정하며 수행한다.',
+  '타인에게 가르치거나 더 나은 방식을 제시할 수 있다.',
+];
+const IMPORTANCE_LABELS = ['조금 중요','약간 중요','중요','많이 중요','매우 중요'];
+const IMPORTANCE_CRITERIA = [
+  '없어도 업무에 큰 지장은 없지만 어느 정도 중요하다.',
+  '있으면 업무에 도움이 된다.',
+  '업무를 수행하는 데 중요한 역량이다.',
+  '부족하면 업무에 어려움이 크다.',
+  '없으면 업무 수행 자체가 어렵다.',
+];
+const REQUIRED_LEVEL = 3.5;
+
+const ALL_GROUPS = [...COMMON, ...JOB, ...ROLE['매니저'], ...ROLE['선임매니저'], ...ROLE['센터장']];
+const GROUP_TITLE = {};
+ALL_GROUPS.forEach(g => GROUP_TITLE[g.key] = g.title);
+// 그룹 키 -> 층위 라벨 (공통역량 / 직무역량 / 역할역량 · 직급명) — 저장된 응답(층위 정보 없음)에서도 재구성 가능하도록 정적 매핑
+const GROUP_LAYER = {};
+COMMON.forEach(g => GROUP_LAYER[g.key] = '공통역량');
+JOB.forEach(g => GROUP_LAYER[g.key] = '직무역량');
+Object.entries(ROLE).forEach(([roleName, arr]) => arr.forEach(g => GROUP_LAYER[g.key] = '역할역량 · ' + roleName));
+const LAYER_ORDER = ['공통역량', '직무역량', '역할역량'];
+const LAYER_COLOR = { '공통역량': 'var(--navy)', '직무역량': 'var(--coral)', '역할역량': 'var(--gold)' };
+// 매니저 티어(공통+직무+매니저역할) 14개 그룹 — 방사형 비교의 공통 축으로 사용
+const MANAGER_TIER_KEYS = [...COMMON.map(g=>g.key), ...JOB.map(g=>g.key), ...ROLE['매니저'].map(g=>g.key)];
+
+const CHART_COLORS = ['#2F3C7E', '#E85D4C', '#D9A441', '#3E8E5A', '#8B5FBF', '#3E8EC9', '#C4432F', '#6B6B6B'];
+
+// 역량 목록을 공통/직무/역할 3개 층으로 묶어 색상 구분된 블록으로 렌더링
+function groupedFactorBarsHTML(groups) {
+  return LAYER_ORDER.map(layerKey => {
+    const items = groups.filter(g => g.layer && g.layer.indexOf(layerKey) === 0);
+    if (items.length === 0) return '';
+    const layerAvg = avg(items.map(g => g.level));
+    const color = LAYER_COLOR[layerKey];
+    return `
+      <div style="margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 14px; background:${color}; border-radius:10px 10px 0 0;">
+          <span style="color:#fff; font-weight:700; font-size:14.5px;">${escapeHtml(items[0].layer)}</span>
+          <span style="color:#fff; font-size:13px;">층 평균 ${fmt(layerAvg)}</span>
+        </div>
+        <div style="border:1.5px solid ${color}; border-top:none; border-radius:0 0 10px 10px; padding:14px 16px 2px;">
+          ${items.map(g => `
+            <div class="factorBar">
+              <div class="factorBarTop">
+                <span class="factorBarName">${escapeHtml(g.title)}</span>
+                <span>수준 ${fmt(g.level)} · 중요도 ${fmt(g.importance)} ${levelTag(g.level)}</span>
+              </div>
+              <div class="factorTrack"><div class="factorFill" style="width:${(g.level/5*100).toFixed(0)}%; background:${barColor(g.level)};"></div></div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+// ================= 상태 =================
+const CURRENT_YEAR = new Date().getFullYear();
+let state = {
+  screen: 'start',
+  name: '',
+  role: '',
+  year: CURRENT_YEAR,
+  round: 1,
+  team: '',
+  teamAccordionOpen: false,
+  sections: [],
+  sectionIndex: 0,
+  answers: {}, // id -> {level, importance}
+  dbReady: false,
+  dbNS: null,
+  saving: false,
+  saved: false,
+  adminUnlocked: false,
+  cache: null, // 모든 응답 캐시
+  saveMode: '', // 'shared'(공유 저장소) | 'local'(이 기기에만)
+  teamPasscodeOK: null, // 팀 암호 확인이 완료된 선임매니저 이름
+  adminExtraTeams: [], // 관리자가 응답 없이 미리 추가한 팀 이름
+};
+
+function buildSections(role) {
+  const s = [];
+  COMMON.forEach(g => s.push({ layer:'공통역량', ...g }));
+  JOB.forEach(g => s.push({ layer:'직무역량', ...g }));
+  (ROLE[role] || []).forEach(g => s.push({ layer:'역할역량 · ' + role, ...g }));
+  return s;
+}
+function itemId(sec, idx) { return sec.key + '-' + idx; }
+function allAnsweredInSection(sec) {
+  return sec.items.every((_, i) => {
+    const a = state.answers[itemId(sec, i)];
+    return a && a.level != null && a.importance != null;
+  });
+}
+
+function computeScores() {
+  const groupScores = {};
+  state.sections.forEach(sec => {
+    const levels = [], importances = [];
+    sec.items.forEach((_, i) => {
+      const a = state.answers[itemId(sec, i)];
+      if (a) { if (a.level != null) levels.push(a.level); if (a.importance != null) importances.push(a.importance); }
+    });
+    groupScores[sec.key] = {
+      title: sec.title, layer: sec.layer,
+      level: avg(levels), importance: avg(importances),
+    };
+  });
+  const byLayer = (layerPrefix) => {
+    const keys = state.sections.filter(s => s.layer.startsWith(layerPrefix)).map(s => s.key);
+    const lv = keys.map(k => groupScores[k].level).filter(v => v != null);
+    const im = keys.map(k => groupScores[k].importance).filter(v => v != null);
+    return { level: avg(lv), importance: avg(im) };
+  };
+  return { groupScores, common: byLayer('공통역량'), job: byLayer('직무역량'), role: byLayer('역할역량') };
+}
+
+// ================= DB (Supabase) =================
+// ▼▼▼ 여기 두 줄만 본인 Supabase 프로젝트 값으로 바꿔주세요 ▼▼▼
+// Supabase 대시보드 → Settings → API 에서 복사
+const SUPABASE_URL = 'https://sptxkuhirlilznqzsmpy.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwdHhrdWhpcmxpbHpucXpzbXB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyNjA4NjAsImV4cCI6MjEwNjgzNjg2MH0.MROw6wMYENX3Bxm7Q4EaaECDB-a5qFoVGKZxzjz2f8E';
+// ▲▲▲ 여기까지 ▲▲▲
+
+function buildSupabaseAdapter() {
+  if (!window.supabase || !window.supabase.createClient) return null;
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf('YOUR-PROJECT-ID') !== -1) return null;
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const toRow = (payload) => ({
+    name: payload.name, role: payload.role, team: payload.team,
+    year: payload.year, round: payload.round,
+    submitted_at: payload.submittedAt,
+    answers: payload.answers, group_scores: payload.groupScores,
+    common_avg: payload.commonAvg, job_avg: payload.jobAvg, role_avg: payload.roleAvg,
+  });
+  const fromRow = (row) => ({
+    name: row.name, role: row.role, team: row.team, year: row.year, round: row.round,
+    submittedAt: row.submitted_at, answers: row.answers, groupScores: row.group_scores,
+    commonAvg: row.common_avg, jobAvg: row.job_avg, roleAvg: row.role_avg,
+  });
+
+  return {
+    collection(name) {
+      return {
+        async add(payload) {
+          const { error } = await client.from(name).insert([toRow(payload)]);
+          if (error) throw error;
+          return {};
+        },
+        async get() {
+          const { data, error } = await client.from(name).select('*');
+          if (error) throw error;
+          return { docs: (data || []).map(row => ({ data: () => fromRow(row) })) };
+        },
+      };
+    },
+    doc(path) {
+      // 형식: "settings/teamPasscodes" 같은 "테이블/키" 문자열
+      const [table, key] = path.split('/');
+      return {
+        async get() {
+          const { data, error } = await client.from(table).select('*').eq('key', key).maybeSingle();
+          if (error) throw error;
+          return { exists: !!data, data: () => (data ? data.value : undefined) };
+        },
+        async set(obj) {
+          const { error } = await client.from(table).upsert({ key, value: obj, updated_at: new Date().toISOString() });
+          if (error) throw error;
+        },
+      };
+    },
+  };
+}
+
+async function initDb() {
+  try {
+    const adapter = buildSupabaseAdapter();
+    if (adapter) { state.dbNS = adapter; state.dbReady = true; return; }
+  } catch (e) {}
+  // Supabase 설정이 안 되어 있으면, 혹시 Claude 아티팩트 환경에서 열린 경우를 위해 기존 방식도 시도
+  try {
+    if (!window.claude || !window.claude.use) return;
+    const db = await window.claude.use('db');
+    if (db) { state.dbNS = db; state.dbReady = true; }
+  } catch (e) {}
+}
+
+let _downloadsNS;
+async function getDownloads() {
+  if (_downloadsNS !== undefined) return _downloadsNS;
+  // 일반 웹페이지(Vercel 등)에서는 브라우저 자체 다운로드 방식을 사용
+  _downloadsNS = {
+    async save({ filename, data }) {
+      const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    },
+  };
+  // Claude 아티팩트 환경에서 열린 경우에는 그쪽 기능을 우선 사용
+  try {
+    if (window.claude && window.claude.use) {
+      const claudeDownloads = await window.claude.use('downloads');
+      if (claudeDownloads) _downloadsNS = claudeDownloads;
+    }
+  } catch (e) {}
+  return _downloadsNS;
+}
+async function saveResponse() {
+  const scores = computeScores();
+  const payload = {
+    name: state.name, role: state.role, year: state.year, round: state.round,
+    team: (state.role === '매니저' || state.role === '선임매니저') ? (state.team || '') : '',
+    submittedAt: new Date().toISOString(),
+    answers: state.answers,
+    groupScores: Object.fromEntries(Object.entries(scores.groupScores).map(([k,v])=>[k,{level:v.level, importance:v.importance}])),
+    commonAvg: scores.common, jobAvg: scores.job, roleAvg: scores.role,
+  };
+  if (state.dbReady && state.dbNS) {
+    try { await state.dbNS.collection('responses').add(payload); state.saved = true; state.saveMode = 'shared'; state.cache = null; return; }
+    catch (e) {}
+  }
+  try {
+    const local = JSON.parse(localStorage.getItem('gj_competency_local') || '[]');
+    local.push(payload);
+    localStorage.setItem('gj_competency_local', JSON.stringify(local));
+    state.saved = true; state.saveMode = 'local'; state.cache = null;
+  } catch (e) {}
+}
+async function fetchAllResponses(force) {
+  if (state.cache && !force) return state.cache;
+  const rows = [];
+  if (state.dbReady && state.dbNS) {
+    try { const snap = await state.dbNS.collection('responses').get(); snap.docs.forEach(d => rows.push(d.data())); }
+    catch (e) {}
+  }
+  if (rows.length === 0) {
+    try { const local = JSON.parse(localStorage.getItem('gj_competency_local') || '[]'); rows.push(...local); } catch (e) {}
+  }
+  state.cache = rows;
+  return rows;
+}
+
+// 팀별 접근 암호 (선임매니저 이름 -> 암호). 코드에 고정하지 않고 db에 저장해 센터장이 언제든 변경 가능.
+async function loadTeamPasscodes() {
+  if (state.dbReady && state.dbNS) {
+    try {
+      const snap = await state.dbNS.doc('settings/teamPasscodes').get();
+      if (snap.exists) return (snap.data().passcodes || {});
+    } catch (e) {}
+  }
+  try { return JSON.parse(localStorage.getItem('gj_team_passcodes_local') || '{}'); } catch (e) { return {}; }
+}
+async function saveTeamPasscodes(map) {
+  if (state.dbReady && state.dbNS) {
+    try { await state.dbNS.doc('settings/teamPasscodes').set({ passcodes: map, updatedAt: new Date().toISOString() }); return true; }
+    catch (e) {}
+  }
+  try { localStorage.setItem('gj_team_passcodes_local', JSON.stringify(map)); return true; } catch (e) { return false; }
+}
+
+// 센터장(관리자) 마스터 암호 — 코드에 고정하지 않고 db에 저장, 최초 기본값은 DEFAULT_ADMIN_PASSCODE
+const DEFAULT_ADMIN_PASSCODE = 'gwangjin2026';
+async function loadAdminPasscode() {
+  if (state.dbReady && state.dbNS) {
+    try {
+      const snap = await state.dbNS.doc('settings/adminPasscode').get();
+      if (snap.exists && snap.data().passcode) return snap.data().passcode;
+    } catch (e) {}
+  }
+  try {
+    const local = localStorage.getItem('gj_admin_passcode_local');
+    if (local) return local;
+  } catch (e) {}
+  return DEFAULT_ADMIN_PASSCODE;
+}
+async function saveAdminPasscode(pw) {
+  if (state.dbReady && state.dbNS) {
+    try { await state.dbNS.doc('settings/adminPasscode').set({ passcode: pw, updatedAt: new Date().toISOString() }); return true; }
+    catch (e) {}
+  }
+  try { localStorage.setItem('gj_admin_passcode_local', pw); return true; } catch (e) { return false; }
+}
+
+// ================= 유틸 =================
+function fmt(n) { return (n == null || isNaN(n)) ? '-' : n.toFixed(1); }
+function avg(arr) { const a = arr.filter(v => v != null); return a.length ? a.reduce((x,y)=>x+y,0)/a.length : null; }
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function roundLabel(r) { return r.year + '-' + r.round + '회차'; }
+function sortRounds(rows) { return rows.slice().sort((a,b)=> a.year - b.year || a.round - b.round); }
+function levelTag(v) {
+  if (v == null) return '';
+  if (v >= 4) return '<span class="tag ok">양호</span>';
+  if (v >= REQUIRED_LEVEL) return '<span class="tag mid">보통</span>';
+  return '<span class="tag dev">개발필요</span>';
+}
+function barColor(v) {
+  if (v == null) return '#ccc';
+  if (v >= 4) return 'var(--green)';
+  if (v >= REQUIRED_LEVEL) return 'var(--amber)';
+  return 'var(--red)';
+}
+function overallLevel(row) {
+  const vals = [row.commonAvg && row.commonAvg.level, row.jobAvg && row.jobAvg.level, row.roleAvg && row.roleAvg.level].filter(v=>v!=null);
+  return avg(vals);
+}
+
+// ================= SVG 차트 =================
+function lineChartSVG(series, xLabels, opts) {
+  opts = opts || {};
+  const width = opts.width || 640, height = opts.height || 260;
+  const pad = { l: 34, r: 16, t: 16, b: 40 };
+  const innerW = width - pad.l - pad.r, innerH = height - pad.t - pad.b;
+  const yMin = 1, yMax = 5;
+  const n = xLabels.length;
+  const xStep = n > 1 ? innerW / (n - 1) : 0;
+  const xAt = i => pad.l + xStep * i;
+  const yAt = v => pad.t + innerH - ((v - yMin) / (yMax - yMin)) * innerH;
+
+  let grid = '';
+  for (let v = 1; v <= 5; v++) {
+    const y = yAt(v);
+    grid += `<line x1="${pad.l}" y1="${y}" x2="${width-pad.r}" y2="${y}" stroke="var(--border)" stroke-width="1" />`;
+    grid += `<text x="${pad.l-8}" y="${y+4}" font-size="10.5" fill="var(--text-mute)" text-anchor="end">${v}</text>`;
+  }
+  let xAxisLabels = '';
+  xLabels.forEach((lb, i) => {
+    xAxisLabels += `<text x="${xAt(i)}" y="${height-pad.b+18}" font-size="10.5" fill="var(--text-mute)" text-anchor="middle">${escapeHtml(lb)}</text>`;
+  });
+
+  let paths = '';
+  series.forEach(s => {
+    let d = ''; let open = false;
+    s.values.forEach((v, i) => {
+      if (v == null) { open = false; return; }
+      const x = xAt(i), y = yAt(v);
+      d += (open ? ' L ' : ' M ') + x.toFixed(1) + ',' + y.toFixed(1);
+      open = true;
+    });
+    paths += `<path d="${d.trim()}" fill="none" stroke="${s.color}" stroke-width="${s.width||2.5}" stroke-dasharray="${s.dashed?'5,4':'none'}" />`;
+    s.values.forEach((v, i) => {
+      if (v == null) return;
+      paths += `<circle cx="${xAt(i)}" cy="${yAt(v)}" r="${s.width && s.width>3?4.5:3.5}" fill="${s.color}" />`;
+    });
+  });
+
+  // 값 라벨 — 같은 x열에서 점들이 가까우면 겹치지 않도록 세로로 밀어냄
+  let valueLabels = '';
+  if (opts.showLabels) {
+    xLabels.forEach((_, xi) => {
+      let pts = series
+        .map(s => ({ v: s.values[xi], color: s.color }))
+        .filter(p => p.v != null)
+        .map(p => ({ ...p, y: yAt(p.v) }))
+        .sort((a, b) => a.y - b.y);
+      const minGap = 12;
+      for (let k = 1; k < pts.length; k++) {
+        if (pts[k].y - pts[k - 1].y < minGap) pts[k].y = pts[k - 1].y + minGap;
+      }
+      pts.forEach(p => {
+        const x = xAt(xi);
+        const onRightEdge = xi === xLabels.length - 1;
+        const lx = onRightEdge ? x - 8 : x + 8;
+        valueLabels += `<text x="${lx}" y="${(p.y + 3).toFixed(1)}" font-size="9.5" font-weight="700" fill="${p.color}" text-anchor="${onRightEdge ? 'end' : 'start'}">${fmt(p.v)}</text>`;
+      });
+    });
+  }
+
+  const legend = `<div class="legend">${series.map(s => `<div class="legendItem"><span class="legendSwatch" style="background:${s.color}"></span>${escapeHtml(s.name)}</div>`).join('')}</div>`;
+
+  return `<div class="chartWrap"><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${grid}${paths}${valueLabels}${xAxisLabels}</svg></div>${legend}`;
+}
+
+function wrapAxisLabel(text) {
+  const maxLen = 7;
+  if (text.length <= maxLen) return [text];
+  const breakChars = [' ', '·'];
+  let bestIdx = -1;
+  for (let i = Math.floor(text.length / 2); i >= 1; i--) { if (breakChars.includes(text[i])) { bestIdx = i; break; } }
+  if (bestIdx === -1) { for (let i = Math.floor(text.length / 2); i < text.length; i++) { if (breakChars.includes(text[i])) { bestIdx = i; break; } } }
+  if (bestIdx === -1) return [text];
+  return [text.slice(0, bestIdx).trim(), text.slice(bestIdx + 1).trim()].filter(Boolean);
+}
+
+function radarChartSVG(axesLabels, series, opts) {
+  opts = opts || {};
+  const size = opts.size || 340;
+  const cx = size / 2, cy = size / 2 - 6;
+  const radius = size / 2 - (opts.labelMargin || 54);
+  const n = axesLabels.length;
+  const angle = i => -Math.PI / 2 + (2 * Math.PI * i) / n;
+  const ptAt = (i, v) => {
+    const r = (v / 5) * radius;
+    return [cx + r * Math.cos(angle(i)), cy + r * Math.sin(angle(i))];
+  };
+
+  let rings = '';
+  [1,2,3,4,5].forEach(v => {
+    const pts = axesLabels.map((_, i) => ptAt(i, v).join(',')).join(' ');
+    rings += `<polygon points="${pts}" fill="none" stroke="var(--border)" stroke-width="1" />`;
+  });
+  let axesLines = '', axesLabelsSvg = '';
+  axesLabels.forEach((label, i) => {
+    const [x, y] = ptAt(i, 5);
+    axesLines += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--border)" stroke-width="1" />`;
+    const lx = cx + (radius + 24) * Math.cos(angle(i));
+    const ly = cy + (radius + 24) * Math.sin(angle(i));
+    const lines = wrapAxisLabel(label);
+    const lineHeight = 12;
+    const totalH = (lines.length - 1) * lineHeight;
+    lines.forEach((line, li) => {
+      const ty = ly - totalH / 2 + li * lineHeight;
+      axesLabelsSvg += `<text x="${lx}" y="${ty}" font-size="10.5" fill="var(--text-mute)" text-anchor="middle">${escapeHtml(line)}</text>`;
+    });
+  });
+
+  let polys = '';
+  series.forEach(s => {
+    const pts = axesLabels.map((_, i) => ptAt(i, s.values[i] == null ? 0 : s.values[i]).join(',')).join(' ');
+    polys += `<polygon points="${pts}" fill="${s.color}" fill-opacity="0.18" stroke="${s.color}" stroke-width="2.5" />`;
+    axesLabels.forEach((_, i) => {
+      if (s.values[i] == null) return;
+      const [x,y] = ptAt(i, s.values[i]);
+      polys += `<circle cx="${x}" cy="${y}" r="3" fill="${s.color}" />`;
+    });
+  });
+
+  // 값 라벨 — 같은 축에서 두 계열 값이 가까우면 반지름 방향으로 밀어내 겹치지 않게 함
+  let valueLabelsSvg = '';
+  const minRadialGap = 15;
+  axesLabels.forEach((_, i) => {
+    let items = series
+      .map(s => ({ v: s.values[i], color: s.color }))
+      .filter(it => it.v != null)
+      .map(it => ({ ...it, r: (it.v / 5) * radius }))
+      .sort((a, b) => a.r - b.r);
+    for (let k = 1; k < items.length; k++) {
+      if (items[k].r - items[k - 1].r < minRadialGap) items[k].r = items[k - 1].r + minRadialGap;
+    }
+    items.forEach(it => {
+      const lx = cx + (it.r + 11) * Math.cos(angle(i));
+      const ly = cy + (it.r + 11) * Math.sin(angle(i));
+      valueLabelsSvg += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" font-size="9.5" font-weight="700" fill="${it.color}" text-anchor="middle">${fmt(it.v)}</text>`;
+    });
+  });
+
+  const legend = `<div class="legend">${series.map(s => `<div class="legendItem"><span class="legendSwatch" style="background:${s.color}"></span>${escapeHtml(s.name)}</div>`).join('')}</div>`;
+  return `<div class="chartWrap center"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${rings}${axesLines}${polys}${valueLabelsSvg}${axesLabelsSvg}</svg></div>${legend}`;
+}
+
+function groupedBarSVG(categories, seriesNames, seriesColors, dataByCategory, opts) {
+  // dataByCategory: [[v1,v2,...], ...] aligned to categories, values aligned to seriesNames
+  opts = opts || {};
+  const barW = opts.barWidth || 22;
+  const groupGap = opts.groupGap || 22;
+  const groupW = Math.max(barW * seriesNames.length + 10, barW * seriesNames.length) + groupGap;
+  const pad = { l: 34, r: 16, t: 20, b: opts.bottomPad || 40 };
+  const width = opts.width || (pad.l + pad.r + groupW * categories.length);
+  const height = opts.height || 260;
+  const innerH = height - pad.t - pad.b;
+  const yAt = v => pad.t + innerH - (v/5) * innerH;
+
+  let grid = '';
+  for (let v=1; v<=5; v++) {
+    const y = yAt(v);
+    grid += `<line x1="${pad.l}" y1="${y}" x2="${pad.l + groupW*categories.length}" y2="${y}" stroke="var(--border)" stroke-width="1" />`;
+    grid += `<text x="${pad.l-8}" y="${y+4}" font-size="10.5" fill="var(--text-mute)" text-anchor="end">${v}</text>`;
+  }
+  let bars = '', labels = '', valueLabels = '';
+  categories.forEach((cat, ci) => {
+    const groupX = pad.l + groupW * ci + (groupW - groupGap - barW*seriesNames.length)/2;
+    seriesNames.forEach((sn, si) => {
+      const v = dataByCategory[ci][si];
+      if (v == null) return;
+      const x = groupX + si*barW;
+      const y = yAt(v);
+      bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW-3).toFixed(1)}" height="${(pad.t+innerH-y).toFixed(1)}" fill="${seriesColors[si]}" rx="3" />`;
+      valueLabels += `<text x="${(x+(barW-3)/2).toFixed(1)}" y="${(y-5).toFixed(1)}" font-size="9" font-weight="700" fill="${seriesColors[si]}" text-anchor="middle">${fmt(v)}</text>`;
+    });
+    const lines = wrapAxisLabel(cat);
+    const lx = pad.l + groupW*ci + (groupW-groupGap)/2;
+    lines.forEach((line, li) => {
+      labels += `<text x="${lx.toFixed(1)}" y="${(height-pad.b+16+li*11).toFixed(1)}" font-size="9.5" fill="var(--text-mute)" text-anchor="middle">${escapeHtml(line)}</text>`;
+    });
+  });
+  const legend = `<div class="legend">${seriesNames.map((n,i)=>`<div class="legendItem"><span class="legendSwatch" style="background:${seriesColors[i]}"></span>${escapeHtml(n)}</div>`).join('')}</div>`;
+  return `<div class="chartWrap"><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${grid}${bars}${valueLabels}${labels}</svg></div>${opts.hideLegend ? '' : legend}`;
+}
+
+// ================= Borich 요구도 & Locus for Focus =================
+// WDS(가중 불일치 점수) = (중요도평균 - 현재수준평균) × 중요도평균  (Borich, 1980)
+function borichScores(groupKeys, rows) {
+  return groupKeys.map(k => {
+    const levels = rows.map(r => r.groupScores && r.groupScores[k] && r.groupScores[k].level).filter(v=>v!=null);
+    const imps = rows.map(r => r.groupScores && r.groupScores[k] && r.groupScores[k].importance).filter(v=>v!=null);
+    const L = avg(levels), I = avg(imps);
+    const gap = (L!=null && I!=null) ? (I - L) : null;
+    const wds = (gap!=null && I!=null) ? gap * I : null;
+    return { key:k, title: GROUP_TITLE[k] || k, level:L, importance:I, gap, wds, n: levels.length };
+  }).filter(g => g.wds != null).sort((a,b)=> b.wds - a.wds);
+}
+
+function borichTableHTML(scoresArr) {
+  if (scoresArr.length === 0) return '<p class="muted">계산할 데이터가 없습니다.</p>';
+  return `
+    <table>
+      <thead><tr><th>순위</th><th>역량</th><th>현재수준</th><th>중요도</th><th>격차</th><th>WDS</th></tr></thead>
+      <tbody>
+        ${scoresArr.map((g,i) => `
+          <tr>
+            <td>${i+1}</td>
+            <td>${escapeHtml(g.title)}</td>
+            <td>${fmt(g.level)}</td>
+            <td>${fmt(g.importance)}</td>
+            <td>${g.gap>=0?'+':''}${fmt(g.gap)}</td>
+            <td><b>${fmt(g.wds)}</b></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// Locus for Focus 사분면 산점도: X=격차(중요도-현재수준), Y=중요도
+function locusScatterSVG(points, opts) {
+  opts = opts || {};
+  const width = opts.width || 460, height = opts.height || 400;
+  const pad = { l: 42, r: 20, t: 20, b: 40 };
+  const innerW = width - pad.l - pad.r, innerH = height - pad.t - pad.b;
+  const gaps = points.map(p=>p.gap);
+  let xMin = Math.min(-0.5, ...gaps) - 0.3, xMax = Math.max(0.5, ...gaps) + 0.3;
+  const yMin = 1, yMax = 5;
+  const xAt = v => pad.l + ((v - xMin) / (xMax - xMin)) * innerW;
+  const yAt = v => pad.t + innerH - ((v - yMin) / (yMax - yMin)) * innerH;
+  const meanGap = avg(points.map(p=>p.gap));
+  const meanImp = avg(points.map(p=>p.importance));
+
+  let grid = '';
+  grid += `<rect x="${pad.l}" y="${pad.t}" width="${innerW}" height="${innerH}" fill="none" stroke="var(--border)" stroke-width="1" />`;
+  [1,2,3,4,5].forEach(v => {
+    grid += `<text x="${pad.l-8}" y="${yAt(v)+4}" font-size="10" fill="var(--text-mute)" text-anchor="end">${v}</text>`;
+    grid += `<line x1="${pad.l}" y1="${yAt(v)}" x2="${width-pad.r}" y2="${yAt(v)}" stroke="var(--border)" stroke-width="0.5" />`;
+  });
+  const xTickStep = ((xMax - xMin) > 4) ? 1 : 0.5;
+  for (let v = Math.ceil(xMin/xTickStep)*xTickStep; v <= xMax; v += xTickStep) {
+    grid += `<text x="${xAt(v)}" y="${height-pad.b+16}" font-size="10" fill="var(--text-mute)" text-anchor="middle">${v.toFixed(1)}</text>`;
+  }
+  // 사분면 기준선 (평균)
+  grid += `<line x1="${xAt(meanGap)}" y1="${pad.t}" x2="${xAt(meanGap)}" y2="${height-pad.b}" stroke="var(--coral)" stroke-width="1.5" stroke-dasharray="4,4" />`;
+  grid += `<line x1="${pad.l}" y1="${yAt(meanImp)}" x2="${width-pad.r}" y2="${yAt(meanImp)}" stroke="var(--coral)" stroke-width="1.5" stroke-dasharray="4,4" />`;
+  grid += `<text x="${width-pad.r-4}" y="${pad.t+14}" font-size="10.5" fill="var(--coral-dark)" text-anchor="end" font-weight="700">우선순위 영역</text>`;
+  grid += `<text x="${(pad.l+innerW/2).toFixed(1)}" y="${height-6}" font-size="11" fill="var(--text-mute)" text-anchor="middle">격차(중요도−현재수준) →</text>`;
+
+  let points_svg = '';
+  points.forEach(p => {
+    const priority = p.gap >= meanGap && p.importance >= meanImp;
+    const x = xAt(p.gap), y = yAt(p.importance);
+    points_svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="${priority?'var(--coral)':'var(--navy)'}" fill-opacity="0.85" />`;
+    points_svg += `<text x="${x.toFixed(1)}" y="${(y-10).toFixed(1)}" font-size="10.5" fill="${priority?'var(--coral-dark)':'var(--text-mute)'}" text-anchor="middle" font-weight="${priority?'700':'400'}">${escapeHtml(p.key)}</text>`;
+  });
+
+  return `<div class="chartWrap"><svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${grid}${points_svg}</svg></div>
+    <p class="muted" style="margin-top:8px;">점선 교차점은 전체 평균(격차 ${fmt(meanGap)}, 중요도 ${fmt(meanImp)})입니다. 오른쪽 위(코랄색 점)가 중요도·격차 모두 평균 이상인 <b>최우선 개발 영역</b>입니다.</p>`;
+}
+
+function borichCardHTML(id, title, scoresArr) {
+  const top3 = scoresArr.slice(0, 3);
+  return `
+    <div class="card">
+      <h2>${escapeHtml(title)}</h2>
+      <p class="muted" style="margin-bottom:14px;">Borich 요구도 공식(WDS = 격차 × 중요도)으로 산출한 교육 우선순위입니다.</p>
+      ${scoresArr.length ? `
+        <div class="banner">최우선 개발 영역 (WDS 상위 3개): ${top3.map(g=>escapeHtml(g.title)).join(' · ')}</div>
+        <h3>Locus for Focus (격차 × 중요도 사분면)</h3>
+        <div id="${id}">${locusScatterSVG(scoresArr.map(g=>({key:g.key, gap:g.gap, importance:g.importance})))}</div>
+        <h3>Borich 요구도 순위표</h3>
+        ${borichTableHTML(scoresArr)}
+      ` : '<p class="muted">계산할 데이터가 없습니다.</p>'}
+    </div>
+  `;
+}
+
+// ================= 화면 렌더링 =================
+const app = document.getElementById('app');
+function render() {
+  if (state.screen === 'start') return renderStart();
+  if (state.screen === 'survey') return renderSurvey();
+  if (state.screen === 'results') return renderResults();
+  if (state.screen === 'mytrend') return renderMyTrend();
+  if (state.screen === 'roundDetail') return renderRoundDetail();
+  if (state.screen === 'team') return renderTeam();
+  if (state.screen === 'org') return renderOrg();
+  if (state.screen === 'admin') return renderAdmin();
+}
+
+function renderStart() {
+  const yearOptions = [CURRENT_YEAR-1, CURRENT_YEAR, CURRENT_YEAR+1];
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진</div>
+    <h1>직원 역량진단</h1>
+    <p class="muted">공통역량 25문항 · 직무역량 23문항 · 직급별 역량 문항으로 구성된 자기진단입니다. 문항마다 현재수준과 중요도를 함께 응답합니다.</p>
+    <div class="card">
+      <div class="banner">이 진단은 평가가 아니라 성장을 위한 자료입니다.</div>
+      <h2 style="margin-top:4px;">이름</h2>
+      <input type="text" id="nameInput" placeholder="예: 홍길동" value="${escapeHtml(state.name)}" />
+
+      <h2 style="margin-top:20px;">직급</h2>
+      <div class="roleGrid">
+        ${['매니저','선임매니저','센터장'].map(r => `<div class="roleCard ${state.role===r?'selected':''}" data-role="${r}">${r}</div>`).join('')}
+      </div>
+
+      ${(state.role === '매니저' || state.role === '선임매니저') ? `
+        <h2>소속 팀</h2>
+        <p class="muted" style="margin-top:-6px;">팀별 성장 그래프와 결과 열람에 사용됩니다.</p>
+        <div class="accordionWrap">
+          <button type="button" id="teamAccordionToggle" class="accordionToggle">
+            <span>팀 선택</span>
+            <span class="accordionValue">${state.team ? escapeHtml(state.team) : '선택해주세요'} <span class="accordionArrow">${state.teamAccordionOpen ? '▲' : '▼'}</span></span>
+          </button>
+          ${state.teamAccordionOpen ? `
+            <div class="accordionPanel">
+              ${TEAM_NAMES.map(t => `<div class="accordionOption ${state.team===t?'selected':''}" data-team="${escapeHtml(t)}">${escapeHtml(t)}</div>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+        <div style="height:16px;"></div>
+      ` : ''}
+
+      <div class="fieldGrid" style="margin-top:16px;">
+        <div>
+          <h2>진단 연도</h2>
+          <select id="yearSelect">${yearOptions.map(y=>`<option value="${y}" ${y===state.year?'selected':''}>${y}년</option>`).join('')}</select>
+        </div>
+        <div>
+          <h2>회차</h2>
+          <select id="roundSelect">${[1,2,3,4].map(r=>`<option value="${r}" ${r===state.round?'selected':''}>${r}회차</option>`).join('')}</select>
+        </div>
+      </div>
+
+      <div style="height:18px;"></div>
+      <button class="btn" id="startBtn" ${(!state.name.trim() || !state.role || ((state.role==='매니저'||state.role==='선임매니저') && !state.team)) ? 'disabled' : ''}>진단 시작하기</button>
+    </div>
+
+    <p class="quickNavTitle">결과 보기</p>
+    <div class="quickNav">
+      <button class="quickNavBtn" id="myTrendBtn" style="--qc: var(--navy);">
+        <span class="quickNavIcon">📈</span>
+        <span class="quickNavLabel">나의 변화 보기</span>
+        <span class="quickNavSub">누구나</span>
+      </button>
+      <button class="quickNavBtn" id="teamBtn" style="--qc: var(--coral);">
+        <span class="quickNavIcon">👥</span>
+        <span class="quickNavLabel">우리 팀 성장 보기</span>
+        <span class="quickNavSub">선임매니저</span>
+      </button>
+      <button class="quickNavBtn" id="orgBtn" style="--qc: var(--gold);">
+        <span class="quickNavIcon">🏢</span>
+        <span class="quickNavLabel">전체 현황 보기</span>
+        <span class="quickNavSub">센터장</span>
+      </button>
+      <button class="quickNavBtn" id="adminBtn" style="--qc: #6B6B8E;">
+        <span class="quickNavIcon">🛠️</span>
+        <span class="quickNavLabel">관리자 대시보드</span>
+        <span class="quickNavSub">센터장</span>
+      </button>
+    </div>
+  `;
+  document.getElementById('nameInput').oninput = (e) => { state.name = e.target.value; syncStartBtn(); };
+  const teamToggle = document.getElementById('teamAccordionToggle');
+  if (teamToggle) teamToggle.onclick = () => { state.teamAccordionOpen = !state.teamAccordionOpen; render(); };
+  app.querySelectorAll('.accordionOption').forEach(el => el.onclick = () => { state.team = el.dataset.team; state.teamAccordionOpen = false; render(); });
+  document.getElementById('yearSelect').onchange = (e) => { state.year = Number(e.target.value); };
+  document.getElementById('roundSelect').onchange = (e) => { state.round = Number(e.target.value); };
+  app.querySelectorAll('.roleCard').forEach(el => el.onclick = () => { state.role = el.dataset.role; render(); });
+  const startBtn = document.getElementById('startBtn');
+  startBtn.onclick = () => {
+    state.sections = buildSections(state.role);
+    state.sectionIndex = 0;
+    state.answers = {};
+    state.saved = false;
+    state.saveMode = '';
+    state.screen = 'survey';
+    render(); window.scrollTo(0,0);
+  };
+  document.getElementById('myTrendBtn').onclick = () => { state.screen = 'mytrend'; render(); };
+  const teamBtn = document.getElementById('teamBtn'); if (teamBtn) teamBtn.onclick = () => { state.screen = 'team'; render(); };
+  const orgBtn = document.getElementById('orgBtn'); if (orgBtn) orgBtn.onclick = () => { state.screen = 'org'; render(); };
+  const adminBtn = document.getElementById('adminBtn'); if (adminBtn) adminBtn.onclick = () => { state.screen = 'admin'; render(); };
+}
+function syncStartBtn() { const b = document.getElementById('startBtn'); if (b) b.disabled = !(state.name.trim() && state.role && (!(state.role==='매니저'||state.role==='선임매니저') || state.team)); }
+
+function renderSurvey() {
+  const sec = state.sections[state.sectionIndex];
+  const totalSteps = state.sections.length;
+  const pct = Math.round((state.sectionIndex / totalSteps) * 100);
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진 · ${escapeHtml(state.name)} (${escapeHtml(state.role)}) · ${state.year}년 ${state.round}회차</div>
+    <div class="stepLabel">${sec.layer} · ${state.sectionIndex+1} / ${totalSteps}단계</div>
+    <div class="progressWrap"><div class="progressBar" style="width:${pct}%"></div></div>
+    <h1 style="font-size:24px;">${escapeHtml(sec.title)}</h1>
+
+    <details class="card" style="padding:14px 18px;">
+      <summary style="cursor:pointer; font-weight:700; color:var(--heading); font-size:14px;">현재수준 척도 기준 보기</summary>
+      <table style="margin-top:10px;">
+        <thead><tr><th style="width:26px;">점수</th><th>라벨</th><th>행동 기준</th></tr></thead>
+        <tbody>${LEVEL_LABELS.map((lb,i)=>`<tr><td>${i+1}</td><td><b>${escapeHtml(lb)}</b></td><td>${escapeHtml(LEVEL_CRITERIA[i])}</td></tr>`).join('')}</tbody>
+      </table>
+    </details>
+
+    <details class="card" style="padding:14px 18px;">
+      <summary style="cursor:pointer; font-weight:700; color:var(--heading); font-size:14px;">중요도 척도 기준 보기</summary>
+      <table style="margin-top:10px;">
+        <thead><tr><th style="width:26px;">점수</th><th>라벨</th><th>행동 기준</th></tr></thead>
+        <tbody>${IMPORTANCE_LABELS.map((lb,i)=>`<tr><td>${i+1}</td><td><b>${escapeHtml(lb)}</b></td><td>${escapeHtml(IMPORTANCE_CRITERIA[i])}</td></tr>`).join('')}</tbody>
+      </table>
+    </details>
+
+    <div class="card">
+      ${sec.items.map((it, i) => {
+        const id = itemId(sec, i);
+        const a = state.answers[id] || {};
+        const scaleRow = (dim, labels, cls) => [1,2,3,4,5].map(n => `
+          <button class="scaleBtn ${a[dim]===n?'selected '+cls:''}" data-id="${id}" data-dim="${dim}" data-val="${n}">
+            <span class="num">${n}</span><span>${labels[n-1]}</span>
+          </button>`).join('');
+        return `
+        <div class="item">
+          <div class="itemSub">${escapeHtml(it[0])}</div>
+          <div class="itemText">${escapeHtml(it[1])}</div>
+          <div class="scaleGroup">
+            <div class="scaleLabel">현재수준</div>
+            <div class="scale">${scaleRow('level', LEVEL_LABELS, 'level')}</div>
+          </div>
+          <div class="scaleGroup">
+            <div class="scaleLabel">중요도</div>
+            <div class="scale">${scaleRow('importance', IMPORTANCE_LABELS, 'importance')}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="navRow">
+      <button class="btn secondary" id="prevBtn" ${state.sectionIndex===0?'disabled':''}>이전</button>
+      <button class="btn" id="nextBtn" ${allAnsweredInSection(sec)?'':'disabled'}>${state.sectionIndex===totalSteps-1?'제출하기':'다음'}</button>
+    </div>
+  `;
+  app.querySelectorAll('.scaleBtn').forEach(b => b.onclick = () => {
+    const id = b.dataset.id, dim = b.dataset.dim, val = Number(b.dataset.val);
+    state.answers[id] = state.answers[id] || {};
+    state.answers[id][dim] = val;
+    render();
+  });
+  document.getElementById('prevBtn').onclick = () => { state.sectionIndex--; render(); window.scrollTo(0,0); };
+  document.getElementById('nextBtn').onclick = async () => {
+    if (state.sectionIndex < totalSteps - 1) { state.sectionIndex++; render(); window.scrollTo(0,0); return; }
+    state.saving = true; render();
+    await saveResponse();
+    state.saving = false;
+    state.screen = 'results'; render(); window.scrollTo(0,0);
+  };
+  if (state.saving) { const nb = document.getElementById('nextBtn'); nb.disabled = true; nb.textContent = '저장 중...'; }
+}
+
+function renderResults() {
+  const scores = computeScores();
+  const groups = Object.values(scores.groupScores);
+  const sorted = [...groups].sort((a,b) => a.level - b.level);
+  const devAreas = sorted.slice(0, 2);
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진</div>
+    <h1>${escapeHtml(state.name)}님의 ${state.year}년 ${state.round}회차 결과</h1>
+    ${state.saveMode === 'shared' ? '<p class="muted">✅ 응답이 공유 저장소에 저장되었습니다.</p>' : '<div class="banner" style="background:#FCE4E4; color:#8A2A1D;">⚠ 응답이 공유 저장소에 저장되지 않았습니다. 이 기기에만 임시 저장되어 선임매니저·센터장 화면에 반영되지 않습니다. 인터넷 연결 상태와, 앱 설정(Supabase 주소·키)이 올바른지 관리자에게 확인해주세요.</div>'}
+
+    <div class="card">
+      <div class="row" style="justify-content:space-around; text-align:center;">
+        <div><div class="bigNum">${fmt(scores.common.level)}</div><div class="muted">공통역량</div></div>
+        <div><div class="bigNum">${fmt(scores.job.level)}</div><div class="muted">직무역량</div></div>
+        <div><div class="bigNum">${fmt(scores.role.level)}</div><div class="muted">역할역량</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>역량별 점수 (현재수준 / 중요도)</h2>
+      <p class="muted" style="margin-bottom:16px;">참고 기준선(${REQUIRED_LEVEL}점) 대비 현재수준입니다. 공통·직무·역할역량 층별로 묶어서 보여드립니다.</p>
+      ${groupedFactorBarsHTML(groups)}
+    </div>
+
+    <div class="card">
+      <h2>우선 성장 제안 영역</h2>
+      <p class="muted">이번 진단에서 상대적으로 낮게 나타난 두 영역입니다.</p>
+      ${devAreas.map(g => `<div style="margin-bottom:8px;"><b>${escapeHtml(g.title)}</b> — 수준 ${fmt(g.level)}점 (중요도 ${fmt(g.importance)}점)</div>`).join('')}
+    </div>
+
+    <div class="footer">
+      <button class="btn" id="trendBtn">나의 변화 추이 보기</button>
+      <div style="height:10px;"></div>
+      <button class="btn secondary" id="restartBtn">처음으로</button>
+    </div>
+  `;
+  document.getElementById('trendBtn').onclick = () => { state.screen = 'mytrend'; render(); };
+  document.getElementById('restartBtn').onclick = () => { state.screen = 'start'; render(); };
+}
+
+async function renderMyTrend() {
+  if (!state.name.trim()) {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div><h1>나의 변화 보기</h1>
+      <div class="card">
+        <p class="muted">이름을 입력하면 지금까지의 진단 결과 추이를 볼 수 있습니다.</p>
+        <input type="text" id="nameInput2" placeholder="예: 홍길동" />
+        <div style="height:14px;"></div>
+        <button class="btn" id="goBtn">조회하기</button>
+      </div>
+      <div class="footer"><button class="btn secondary" id="backBtn">돌아가기</button></div>
+    `;
+    document.getElementById('goBtn').onclick = () => { state.name = document.getElementById('nameInput2').value; render(); };
+    document.getElementById('backBtn').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+  app.innerHTML = `<div class="brand">서울청년센터 광진</div><h1>나의 변화 보기</h1><p class="muted">불러오는 중...</p>`;
+  const all = await fetchAllResponses();
+  const mine = sortRounds(all.filter(r => r.name === state.name));
+
+  if (mine.length === 0) {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div><h1>나의 변화 보기</h1>
+      <div class="card"><p>‘${escapeHtml(state.name)}’ 이름으로 제출된 진단 결과가 없습니다.</p></div>
+      <div class="footer"><button class="btn secondary" id="backBtn">돌아가기</button></div>
+    `;
+    document.getElementById('backBtn').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+
+  const labels = mine.map(roundLabel);
+  const commonSeries = mine.map(r => r.commonAvg && r.commonAvg.level);
+  const jobSeries = mine.map(r => r.jobAvg && r.jobAvg.level);
+  const roleSeries = mine.map(r => r.roleAvg && r.roleAvg.level);
+
+  const chart = lineChartSVG([
+    { name:'공통역량', color: CHART_COLORS[0], values: commonSeries },
+    { name:'직무역량', color: CHART_COLORS[1], values: jobSeries },
+    { name:'역할역량', color: CHART_COLORS[2], values: roleSeries },
+  ], labels);
+
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진</div>
+    <h1>${escapeHtml(state.name)}님의 변화 추이</h1>
+    <p class="muted">${mine.length===1 ? '첫 진단입니다. 다음 회차부터 변화 추이를 확인할 수 있습니다.' : '연도·회차별 역량 변화입니다.'}</p>
+    <div class="card">${chart}</div>
+    <div class="card">
+      <h2>회차별 기록</h2>
+      <p class="muted" style="margin-bottom:10px;">회차를 클릭하면 그때의 역량별 상세 결과를 다시 볼 수 있습니다.</p>
+      <table>
+        <thead><tr><th>연도</th><th>회차</th><th>공통</th><th>직무</th><th>역할</th><th></th></tr></thead>
+        <tbody>${mine.map((r,i) => `<tr data-idx="${i}"><td>${r.year}</td><td>${r.round}</td><td>${fmt(r.commonAvg&&r.commonAvg.level)}</td><td>${fmt(r.jobAvg&&r.jobAvg.level)}</td><td>${fmt(r.roleAvg&&r.roleAvg.level)}</td><td><button class="btn small secondary detailBtn" data-idx="${i}">상세보기</button></td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="footer"><button class="btn secondary" id="backBtn">돌아가기</button></div>
+  `;
+  state.myTrendCache = mine;
+  app.querySelectorAll('.detailBtn').forEach(b => b.onclick = () => {
+    state.detailRow = mine[Number(b.dataset.idx)];
+    state.detailReturnScreen = 'mytrend';
+    state.screen = 'roundDetail';
+    render(); window.scrollTo(0,0);
+  });
+  document.getElementById('backBtn').onclick = () => { state.screen = 'start'; render(); };
+}
+
+function renderRoundDetail() {
+  const r = state.detailRow;
+  if (!r) { state.screen = 'start'; render(); return; }
+  const keys = Object.keys(r.groupScores || {});
+  const groups = keys.map(k => ({ key:k, title: GROUP_TITLE[k] || k, layer: GROUP_LAYER[k] || '', level: r.groupScores[k].level, importance: r.groupScores[k].importance }));
+  const sorted = [...groups].sort((a,b) => a.level - b.level);
+  const devAreas = sorted.slice(0, 2);
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진</div>
+    <h1>${escapeHtml(r.name)}님의 ${r.year}년 ${r.round}회차 결과</h1>
+    <p class="muted">제출일: ${r.submittedAt ? new Date(r.submittedAt).toLocaleString('ko-KR') : '-'}</p>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-around; text-align:center;">
+        <div><div class="bigNum">${fmt(r.commonAvg&&r.commonAvg.level)}</div><div class="muted">공통역량</div></div>
+        <div><div class="bigNum">${fmt(r.jobAvg&&r.jobAvg.level)}</div><div class="muted">직무역량</div></div>
+        <div><div class="bigNum">${fmt(r.roleAvg&&r.roleAvg.level)}</div><div class="muted">역할역량</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>역량별 점수 (현재수준 / 중요도)</h2>
+      <p class="muted" style="margin-bottom:16px;">참고 기준선(${REQUIRED_LEVEL}점) 대비 현재수준입니다. 공통·직무·역할역량 층별로 묶어서 보여드립니다.</p>
+      ${groupedFactorBarsHTML(groups)}
+    </div>
+
+    <div class="card">
+      <h2>당시 우선 성장 제안 영역</h2>
+      ${devAreas.map(g => `<div style="margin-bottom:8px;"><b>${escapeHtml(g.title)}</b> — 수준 ${fmt(g.level)}점 (중요도 ${fmt(g.importance)}점)</div>`).join('')}
+    </div>
+
+    <div class="footer"><button class="btn secondary" id="backBtn">돌아가기</button></div>
+  `;
+  document.getElementById('backBtn').onclick = () => { state.screen = state.detailReturnScreen || 'mytrend'; render(); };
+}
+
+async function renderTeam() {
+  if (state.role !== '선임매니저') {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div>
+      <h1>접근 권한이 없습니다</h1>
+      <div class="card"><p>팀 성장 보기는 선임매니저만 접근할 수 있습니다. 시작화면에서 이름을 입력하고 직급을 \'선임매니저\'로 선택한 뒤 이 버튼을 다시 눌러주세요.</p></div>
+      <div class="footer"><button class="btn secondary" id="backBtn0">돌아가기</button></div>
+    `;
+    document.getElementById('backBtn0').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+  if (!state.team) {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div>
+      <h1>팀을 선택해주세요</h1>
+      <div class="card"><p>시작화면에서 소속 팀을 선택한 뒤 이 버튼을 다시 눌러주세요.</p></div>
+      <div class="footer"><button class="btn secondary" id="backBtn0">돌아가기</button></div>
+    `;
+    document.getElementById('backBtn0').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+
+  if (state.teamPasscodeOK !== state.team) {
+    app.innerHTML = `<div class="brand">서울청년센터 광진</div><h1>우리 팀 성장 보기</h1><p class="muted">확인 중...</p>`;
+    const passcodes = await loadTeamPasscodes();
+    const existing = passcodes[state.team];
+
+    if (existing) {
+      app.innerHTML = `
+        <div class="brand">서울청년센터 광진</div>
+        <h1>팀 암호 확인</h1>
+        <div class="card">
+          <p class="muted">‘${escapeHtml(state.team)}’ 팀의 결과는 다른 팀과 분리되어 있습니다. 팀 암호를 입력하세요.</p>
+          <input type="text" id="teamPinInput" placeholder="팀 암호" />
+          <div style="height:14px;"></div>
+          <div class="row"><button class="btn" id="teamUnlockBtn">확인</button><button class="btn secondary" id="backBtn0">돌아가기</button></div>
+          <p class="muted" id="teamPinError" style="color:var(--red); margin-top:10px;"></p>
+        </div>
+      `;
+      document.getElementById('backBtn0').onclick = () => { state.screen = 'start'; render(); };
+      document.getElementById('teamUnlockBtn').onclick = () => {
+        const v = document.getElementById('teamPinInput').value;
+        if (v === existing) { state.teamPasscodeOK = state.team; render(); }
+        else { document.getElementById('teamPinError').textContent = '암호가 올바르지 않습니다.'; }
+      };
+    } else {
+      app.innerHTML = `
+        <div class="brand">서울청년센터 광진</div>
+        <h1>팀 암호 최초 설정</h1>
+        <div class="card">
+          <p class="muted">‘${escapeHtml(state.team)}’ 팀은 아직 접근 암호가 설정되지 않았습니다. 다른 팀이 이 결과를 볼 수 없도록, 이 팀만의 암호를 새로 만들어주세요. 이후에는 센터장이 관리자 대시보드에서 언제든 변경할 수 있습니다.</p>
+          <input type="text" id="teamPinNew1" placeholder="새 암호" />
+          <div style="height:10px;"></div>
+          <input type="text" id="teamPinNew2" placeholder="새 암호 확인" />
+          <div style="height:14px;"></div>
+          <div class="row"><button class="btn" id="teamSetBtn">설정하기</button><button class="btn secondary" id="backBtn0">돌아가기</button></div>
+          <p class="muted" id="teamPinError2" style="color:var(--red); margin-top:10px;"></p>
+        </div>
+      `;
+      document.getElementById('backBtn0').onclick = () => { state.screen = 'start'; render(); };
+      document.getElementById('teamSetBtn').onclick = async () => {
+        const v1 = document.getElementById('teamPinNew1').value;
+        const v2 = document.getElementById('teamPinNew2').value;
+        if (!v1 || v1.length < 4) { document.getElementById('teamPinError2').textContent = '암호는 4자 이상으로 설정해주세요.'; return; }
+        if (v1 !== v2) { document.getElementById('teamPinError2').textContent = '두 암호가 서로 다릅니다.'; return; }
+        passcodes[state.team] = v1;
+        await saveTeamPasscodes(passcodes);
+        state.teamPasscodeOK = state.team;
+        render();
+      };
+    }
+    return;
+  }
+
+  app.innerHTML = `<div class="brand">서울청년센터 광진</div><h1>우리 팀 성장 보기</h1><p class="muted">불러오는 중...</p>`;
+  const all = await fetchAllResponses();
+  const team = all.filter(r => r.role === '매니저' && r.team === state.team);
+
+  if (team.length === 0) {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div><h1>우리 팀 성장 보기</h1>
+      <div class="card"><p>‘${escapeHtml(state.team)}’ 팀을 선택한 매니저의 응답이 아직 없습니다.<br/><span class="muted">매니저가 진단 시작 화면에서 같은 팀을 선택해야 이곳에 표시됩니다.</span></p></div>
+      <div class="footer"><button class="btn secondary" id="backBtn">돌아가기</button></div>
+    `;
+    document.getElementById('backBtn').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+
+  const managers = [...new Set(team.map(r => r.name))];
+  const rounds = [...new Set(team.map(r => r.year + '-' + r.round))].sort();
+  const roundsObj = rounds.map(rk => { const [y,rr] = rk.split('-').map(Number); return {year:y, round:rr}; });
+  const labels = roundsObj.map(roundLabel);
+
+  // 팀 평균 & 매니저별 라인 (overallLevel 기준)
+  const teamAvgSeries = roundsObj.map(rd => avg(team.filter(r=>r.year===rd.year && r.round===rd.round).map(overallLevel)));
+  const managerSeries = managers.map((m, idx) => ({
+    name: m, color: CHART_COLORS[idx % CHART_COLORS.length],
+    values: roundsObj.map(rd => { const row = team.find(r=>r.name===m && r.year===rd.year && r.round===rd.round); return row ? overallLevel(row) : null; }),
+  }));
+  const trendChart = lineChartSVG([
+    ...managerSeries,
+    { name:'팀 평균', color:'#000000', values: teamAvgSeries, width:3.5, dashed:true },
+  ], labels);
+
+  // 방사형 비교: 선택 매니저 vs 팀평균 (선택 회차)
+  const latestRoundKey = rounds[rounds.length-1];
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진</div>
+    <h1>${escapeHtml(state.team)} 팀 성장 보기</h1>
+    <p class="muted">담당: ${escapeHtml(state.name)} 선임매니저 · 팀원: ${managers.map(escapeHtml).join(', ')}</p>
+
+    <div class="card">
+      <h2>연도·회차별 종합 역량 추이</h2>
+      <p class="muted" style="margin-bottom:14px;">매니저별 선과 팀 평균(검은 점선)을 함께 표시했습니다.</p>
+      ${trendChart}
+    </div>
+
+    <div class="card">
+      <h2>매니저 vs 팀 평균 비교</h2>
+      <div class="fieldGrid" style="margin-bottom:16px;">
+        <div>
+          <div class="scaleLabel">매니저 선택</div>
+          <select id="mgrSelect">${managers.map(m=>`<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('')}</select>
+        </div>
+        <div>
+          <div class="scaleLabel">회차 선택</div>
+          <select id="roundSelect2">${rounds.map(rk=>`<option value="${rk}" ${rk===latestRoundKey?'selected':''}>${rk.replace('-',' - ')}회차</option>`).join('')}</select>
+        </div>
+      </div>
+      <h3 style="margin-top:6px;">공통역량</h3>
+      <div id="radarHolderCommon"></div>
+      <h3>직무역량</h3>
+      <div id="radarHolderJob"></div>
+      <h3>역할역량 · 매니저</h3>
+      <div id="radarHolderRole"></div>
+    </div>
+
+    ${borichCardHTML('locusTeam', '우리 팀 교육 우선순위 (Borich 요구도 분석 · ' + latestRoundKey.replace('-',' - ') + '회차)',
+      borichScores(MANAGER_TIER_KEYS, team.filter(r => (r.year+'-'+r.round) === latestRoundKey)))}
+
+    <div class="footer"><button class="btn secondary" id="backBtn">돌아가기</button></div>
+  `;
+  function drawRadar() {
+    const mgr = document.getElementById('mgrSelect').value;
+    const rk = document.getElementById('roundSelect2').value;
+    const [y, rr] = rk.split('-').map(Number);
+    const mgrRow = team.find(r => r.name === mgr && r.year === y && r.round === rr);
+    const roundRows = team.filter(r => r.year === y && r.round === rr);
+    const teamAvgByKey = {};
+    MANAGER_TIER_KEYS.forEach(k => {
+      const vals = roundRows.map(r => r.groupScores && r.groupScores[k] && r.groupScores[k].level).filter(v=>v!=null);
+      teamAvgByKey[k] = avg(vals);
+    });
+    const layerCharts = [
+      { holder: 'radarHolderCommon', keys: COMMON.map(g=>g.key) },
+      { holder: 'radarHolderJob', keys: JOB.map(g=>g.key) },
+      { holder: 'radarHolderRole', keys: ROLE['매니저'].map(g=>g.key) },
+    ];
+    layerCharts.forEach(({ holder, keys }) => {
+      const labels = keys.map(k => GROUP_TITLE[k]);
+      const mgrValues = keys.map(k => mgrRow && mgrRow.groupScores && mgrRow.groupScores[k] ? mgrRow.groupScores[k].level : null);
+      const teamValues = keys.map(k => teamAvgByKey[k]);
+      const radar = radarChartSVG(labels, [
+        { name: mgr + ' (개인)', color: CHART_COLORS[1], values: mgrValues },
+        { name: '팀 평균', color: CHART_COLORS[0], values: teamValues },
+      ], { size: 360, labelMargin: 70 });
+      document.getElementById(holder).innerHTML = radar;
+    });
+  }
+  document.getElementById('mgrSelect').onchange = drawRadar;
+  document.getElementById('roundSelect2').onchange = drawRadar;
+  drawRadar();
+  document.getElementById('backBtn').onclick = () => { state.screen = 'start'; render(); };
+}
+
+async function renderOrg() {
+  if (state.role !== '센터장') {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div>
+      <h1>접근 권한이 없습니다</h1>
+      <div class="card"><p>전체 현황 보기는 센터장만 접근할 수 있습니다. 시작화면에서 직급을 \'센터장\'으로 선택한 뒤 다시 시도해주세요.</p></div>
+      <div class="footer"><button class="btn secondary" id="backBtn0">돌아가기</button></div>
+    `;
+    document.getElementById('backBtn0').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+  if (!state.adminUnlocked) { await renderAdminGate('전체 현황 보기', '전체 직원 현황을 보려면 센터장 암호를 입력하세요.'); return; }
+  app.innerHTML = `<div class="brand">서울청년센터 광진</div><h1>전체 현황 보기</h1><p class="muted">불러오는 중...</p>`;
+  const all = await fetchAllResponses();
+
+  if (all.length === 0) {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div><h1>전체 현황 보기</h1>
+      <div class="card"><p>아직 제출된 응답이 없습니다.</p></div>
+      <div class="footer"><button class="btn secondary" id="backBtn">돌아가기</button></div>
+    `;
+    document.getElementById('backBtn').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+
+  const rounds = [...new Set(all.map(r => r.year + '-' + r.round))].sort();
+  const roundsObj = rounds.map(rk => { const [y,rr] = rk.split('-').map(Number); return {year:y, round:rr}; });
+  const labels = roundsObj.map(roundLabel);
+  const orgCommon = roundsObj.map(rd => avg(all.filter(r=>r.year===rd.year&&r.round===rd.round).map(r=>r.commonAvg&&r.commonAvg.level)));
+  const orgJob = roundsObj.map(rd => avg(all.filter(r=>r.year===rd.year&&r.round===rd.round).map(r=>r.jobAvg&&r.jobAvg.level)));
+  const roleAvgByRole = (roleName) => roundsObj.map(rd => avg(
+    all.filter(r=>r.year===rd.year && r.round===rd.round && r.role===roleName).map(r=>r.roleAvg&&r.roleAvg.level)
+  ));
+  const mgrRoleTrend = roleAvgByRole('매니저');
+  const seniorRoleTrend = roleAvgByRole('선임매니저');
+  const centerRoleTrend = roleAvgByRole('센터장');
+  const orgTrend = lineChartSVG([
+    { name:'전체 공통역량 평균', color: CHART_COLORS[0], values: orgCommon },
+    { name:'전체 직무역량 평균', color: CHART_COLORS[1], values: orgJob },
+    { name:'매니저 역할역량 평균', color: CHART_COLORS[2], values: mgrRoleTrend },
+    { name:'선임매니저 역할역량 평균', color: CHART_COLORS[3], values: seniorRoleTrend },
+    { name:'센터장 역할역량 평균', color: CHART_COLORS[4], values: centerRoleTrend },
+  ], labels, { showLabels: true, height: 300 });
+
+  const managerRows = all.filter(r => r.role === '매니저');
+  const managers = [...new Set(managerRows.map(r => r.name))];
+  const teams = [...new Set(managerRows.map(r => r.team).filter(t=>t))];
+  const latestRoundKey = rounds[rounds.length-1];
+
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진</div>
+    <h1>전체 현황 보기</h1>
+    <p class="muted">총 ${all.length}건 응답 · ${managers.length}명 매니저 · ${teams.length}개 팀</p>
+
+    <div class="card">
+      <h2>전체 직원 연도·회차별 변화</h2>
+      <p class="muted" style="margin-bottom:14px;">공통·직무역량은 전 직원 평균이고, 역할역량은 직급마다 문항이 달라 매니저·선임매니저·센터장을 각각 따로 표시합니다. 점 옆 숫자는 해당 회차의 평균값입니다.</p>
+      ${orgTrend}
+    </div>
+
+    <div class="card">
+      <h2>매니저 vs 소속팀 평균 비교</h2>
+      <div class="fieldGrid" style="margin-bottom:16px;">
+        <div>
+          <div class="scaleLabel">매니저 선택</div>
+          <select id="mgrSelect">${managers.map(m=>`<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('')}</select>
+        </div>
+        <div>
+          <div class="scaleLabel">회차 선택</div>
+          <select id="roundSelect2">${rounds.map(rk=>`<option value="${rk}" ${rk===latestRoundKey?'selected':''}>${rk.replace('-',' - ')}회차</option>`).join('')}</select>
+        </div>
+      </div>
+      <h3 style="margin-top:6px;">공통역량</h3>
+      <div id="radarHolderCommon"></div>
+      <h3>직무역량</h3>
+      <div id="radarHolderJob"></div>
+      <h3>역할역량 · 매니저</h3>
+      <div id="radarHolderRole"></div>
+    </div>
+
+    <div class="card">
+      <h2>팀별 평균 비교</h2>
+      <p class="muted" style="margin-bottom:12px;">매니저 응답 기준으로, 역량별 모든 하위역량의 현재수준 평균을 팀별 막대(팀마다 같은 색)로 비교합니다. 막대 위 숫자는 평균값입니다.</p>
+      <div class="fieldGrid" style="margin-bottom:16px; max-width:260px;">
+        <div>
+          <div class="scaleLabel">회차 선택</div>
+          <select id="roundSelect3">${rounds.map(rk=>`<option value="${rk}" ${rk===latestRoundKey?'selected':''}>${rk.replace('-',' - ')}회차</option>`).join('')}</select>
+        </div>
+      </div>
+      <div id="teamBarHolder"></div>
+    </div>
+
+    ${borichCardHTML('locusOrg', '전체 조직 교육 우선순위 (Borich 요구도 분석 · ' + latestRoundKey.replace('-',' - ') + '회차)',
+      borichScores([...COMMON, ...JOB].map(g=>g.key), all.filter(r => (r.year+'-'+r.round) === latestRoundKey)))}
+
+    <div class="footer"><button class="btn secondary" id="backBtn">돌아가기</button></div>
+  `;
+
+  function drawMgrRadar() {
+    const mgr = document.getElementById('mgrSelect').value;
+    const rk = document.getElementById('roundSelect2').value;
+    const [y, rr] = rk.split('-').map(Number);
+    const mgrRow = managerRows.find(r => r.name === mgr && r.year === y && r.round === rr);
+    const myTeam = mgrRow ? mgrRow.team : '';
+    const teamRows = managerRows.filter(r => r.team === myTeam && r.year===y && r.round===rr);
+    const teamAvgByKey = {};
+    MANAGER_TIER_KEYS.forEach(k => {
+      const vals = teamRows.map(r => r.groupScores && r.groupScores[k] && r.groupScores[k].level).filter(v=>v!=null);
+      teamAvgByKey[k] = avg(vals);
+    });
+    const layerCharts = [
+      { holder: 'radarHolderCommon', keys: COMMON.map(g=>g.key) },
+      { holder: 'radarHolderJob', keys: JOB.map(g=>g.key) },
+      { holder: 'radarHolderRole', keys: ROLE['매니저'].map(g=>g.key) },
+    ];
+    layerCharts.forEach(({ holder, keys }) => {
+      const labels = keys.map(k => GROUP_TITLE[k]);
+      const mgrValues = keys.map(k => mgrRow && mgrRow.groupScores && mgrRow.groupScores[k] ? mgrRow.groupScores[k].level : null);
+      const teamValues = keys.map(k => teamAvgByKey[k]);
+      const radar = radarChartSVG(labels, [
+        { name: mgr + ' (개인)', color: CHART_COLORS[1], values: mgrValues },
+        { name: (myTeam||'소속팀 미지정') + ' 팀 평균', color: CHART_COLORS[0], values: teamValues },
+      ], { size: 360, labelMargin: 70 });
+      document.getElementById(holder).innerHTML = radar;
+    });
+  }
+  document.getElementById('mgrSelect').onchange = drawMgrRadar;
+  document.getElementById('roundSelect2').onchange = drawMgrRadar;
+  drawMgrRadar();
+
+  function subLabels(g) {
+    const names = g.items.map(it => it[0]);
+    const dup = new Set(names.filter((n, i) => names.indexOf(n) !== i));
+    return names.map((n, i) => dup.has(n) ? n + ' (' + (i + 1) + ')' : n);
+  }
+  function drawTeamBar() {
+    const rk = document.getElementById('roundSelect3').value;
+    const [y, rr] = rk.split('-').map(Number);
+    const teamNames = teams.length ? teams : ['(팀 미지정)'];
+    const teamColors = teamNames.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
+    const rowsByTeam = teamNames.map(tn => managerRows.filter(r => (r.team || '(팀 미지정)') === tn && r.year === y && r.round === rr));
+    const blocks = [
+      { title: '공통역량', groups: COMMON },
+      { title: '직무역량', groups: JOB },
+      { title: '역할역량 · 매니저', groups: ROLE['매니저'] },
+    ];
+    const legend = '<div class="legend" style="margin-bottom:6px;">' + teamNames.map((n, i) => '<div class="legendItem"><span class="legendSwatch" style="background:' + teamColors[i] + '"></span>' + escapeHtml(n) + ' (' + rowsByTeam[i].length + '명)</div>').join('') + '</div>';
+    const html = blocks.map(block => {
+      const charts = block.groups.map(g => {
+        const data = g.items.map((_, i) => rowsByTeam.map(rows => avg(rows.map(r => {
+          const a = r.answers && r.answers[g.key + '-' + i];
+          return a ? a.level : null;
+        }))));
+        const chart = groupedBarSVG(subLabels(g), teamNames, teamColors, data, { height: 230, barWidth: 30, groupGap: 28, bottomPad: 46, hideLegend: true });
+        return '<div style="margin-bottom:18px;"><div style="font-weight:700; font-size:14px; margin-bottom:4px;">' + escapeHtml(g.title) + '</div>' + chart + '</div>';
+      }).join('');
+      return '<h3 style="margin-top:20px; padding-bottom:6px; border-bottom:2px solid var(--border);">' + block.title + '</h3>' + charts;
+    }).join('');
+    document.getElementById('teamBarHolder').innerHTML = legend + html;
+  }
+  document.getElementById('roundSelect3').onchange = drawTeamBar;
+  drawTeamBar();
+
+  document.getElementById('backBtn').onclick = () => { state.screen = 'start'; render(); };
+}
+
+// 센터장 마스터 암호 확인 화면 (관리자 대시보드·전체 현황 보기 공용)
+async function renderAdminGate(title, subtitle) {
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진</div>
+    <h1>${escapeHtml(title)}</h1>
+    <div class="card">
+      <p class="muted">${escapeHtml(subtitle)}</p>
+      <input type="text" id="pinInput" placeholder="센터장 암호" />
+      <div style="height:14px;"></div>
+      <div class="row"><button class="btn" id="unlockBtn">확인</button><button class="btn secondary" id="backBtn">돌아가기</button></div>
+      <p class="muted" id="pinError" style="color:var(--red); margin-top:10px;"></p>
+    </div>
+  `;
+  document.getElementById('backBtn').onclick = () => { state.screen = 'start'; render(); };
+  document.getElementById('unlockBtn').onclick = async () => {
+    const v = document.getElementById('pinInput').value;
+    const correct = await loadAdminPasscode();
+    if (v === correct) { state.adminUnlocked = true; render(); }
+    else { document.getElementById('pinError').textContent = '암호가 올바르지 않습니다.'; }
+  };
+}
+
+async function renderAdmin() {
+  if (state.role !== '센터장') {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div>
+      <h1>접근 권한이 없습니다</h1>
+      <div class="card"><p>관리자 대시보드는 센터장만 접근할 수 있습니다. 시작화면에서 직급을 \'센터장\'으로 선택한 뒤 다시 시도해주세요.</p></div>
+      <div class="footer"><button class="btn secondary" id="backBtn0">돌아가기</button></div>
+    `;
+    document.getElementById('backBtn0').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+  if (!state.adminUnlocked) { await renderAdminGate('관리자 보기', '원자료를 종합해서 보려면 센터장 암호를 입력하세요.'); return; }
+
+  app.innerHTML = `<div class="brand">서울청년센터 광진</div><h1>관리자 대시보드</h1><p class="muted">불러오는 중...</p>`;
+  const rows = await fetchAllResponses(true);
+
+  if (rows.length === 0) {
+    app.innerHTML = `
+      <div class="brand">서울청년센터 광진</div><h1>관리자 대시보드</h1>
+      <div class="card"><p>아직 제출된 응답이 없습니다.</p></div>
+      <div class="footer"><button class="btn secondary" id="backBtn2">돌아가기</button></div>
+    `;
+    document.getElementById('backBtn2').onclick = () => { state.screen = 'start'; render(); };
+    return;
+  }
+
+  const overallCommon = avg(rows.map(r => r.commonAvg && r.commonAvg.level));
+  const overallJob = avg(rows.map(r => r.jobAvg && r.jobAvg.level));
+  const groupKeys = {};
+  rows.forEach(r => { Object.keys(r.groupScores||{}).forEach(k => groupKeys[k] = true); });
+  const groupAvgRows = Object.keys(groupKeys).sort().map(k => {
+    const vals = rows.map(r => r.groupScores && r.groupScores[k] && r.groupScores[k].level).filter(v=>v!=null);
+    return { key:k, title: GROUP_TITLE[k] || k, avg: vals.length ? avg(vals) : null, n: vals.length };
+  }).filter(g => g.avg != null).sort((a,b)=>a.avg-b.avg);
+
+  const adminRounds = [...new Set(rows.map(r => r.year + '-' + r.round))].sort();
+  const adminLatestRoundKey = adminRounds[adminRounds.length - 1];
+  const adminLatestRows = rows.filter(r => (r.year + '-' + r.round) === adminLatestRoundKey);
+  const adminBorichKeys = Object.keys(groupKeys).sort();
+
+  const adminManagerRows = rows.filter(r => r.role === '매니저');
+  const teamPasscodes = await loadTeamPasscodes();
+  const adminTeams = [...new Set([...TEAM_NAMES, ...adminManagerRows.map(r => r.team).filter(t=>t), ...Object.keys(teamPasscodes), ...state.adminExtraTeams])];
+
+  app.innerHTML = `
+    <div class="brand">서울청년센터 광진</div>
+    <h1>관리자 대시보드</h1>
+    <p class="muted">총 응답 ${rows.length}건 ${!state.dbReady ? '(이 기기의 로컬 저장 데이터 기준)' : '(전 직원 공유 데이터 기준, 실시간)'}</p>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-around; text-align:center;">
+        <div><div class="bigNum">${rows.length}</div><div class="muted">응답 건수</div></div>
+        <div><div class="bigNum">${fmt(overallCommon)}</div><div class="muted">공통역량 평균</div></div>
+        <div><div class="bigNum">${fmt(overallJob)}</div><div class="muted">직무역량 평균</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>데이터 백업</h2>
+      <p class="muted">이 앱은 별도 서버 없이 저장되기 때문에, 정기적으로 내려받아 보관해두시길 권합니다.</p>
+      <div class="row">
+        <button class="btn small secondary" id="exportJsonBtn">전체 원본 백업 (JSON)</button>
+        <button class="btn small secondary" id="exportCsvBtn">요약 CSV 다운로드</button>
+      </div>
+      <p class="muted" id="exportMsg" style="margin-top:10px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>팀 접근 암호 관리</h2>
+      <p class="muted">선임매니저가 ‘우리 팀 성장 보기’에 들어갈 때 필요한 암호입니다. 새 값을 입력하고 저장하면 즉시 바뀝니다(빈 칸으로는 저장되지 않습니다).</p>
+      ${adminTeams.length ? adminTeams.map(tn => `
+        <div class="row" style="align-items:center; margin-bottom:10px;">
+          <div style="min-width:110px; font-weight:700;">${escapeHtml(tn)}</div>
+          <input type="text" class="teamPassInput" data-team="${escapeHtml(tn)}" placeholder="${teamPasscodes[tn] ? '설정됨 · 변경하려면 새 암호 입력' : '암호 미설정'}" style="flex:1; min-width:160px;" />
+          <button class="btn small secondary teamPassSaveBtn" data-team="${escapeHtml(tn)}">저장</button>
+        </div>
+      `).join('') : '<p class="muted">아직 등록된 팀이 없습니다.</p>'}
+      <div class="row" style="align-items:center; margin-top:10px;">
+        <input type="text" id="newTeamNameInput" placeholder="새 팀(선임매니저 이름) 추가" style="flex:1; min-width:160px;" />
+        <button class="btn small secondary" id="addTeamBtn">팀 추가</button>
+      </div>
+      <p class="muted" id="teamPassMsg" style="margin-top:10px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>센터장 암호 변경</h2>
+      <p class="muted">‘전체 현황 보기’·‘관리자 대시보드’에 들어올 때 쓰는 암호입니다. 아래에 새 암호를 입력하고 저장하면 다음 접속부터 바로 적용됩니다.</p>
+      <div class="fieldGrid">
+        <input type="text" id="newAdminPw1" placeholder="새 센터장 암호" />
+        <input type="text" id="newAdminPw2" placeholder="새 암호 확인" />
+      </div>
+      <div style="height:12px;"></div>
+      <button class="btn small secondary" id="changeAdminPwBtn">암호 변경</button>
+      <p class="muted" id="adminPwMsg" style="margin-top:10px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>역량별 전체 평균 (낮은 순)</h2>
+      ${groupAvgRows.map(g => `
+        <div class="factorBar">
+          <div class="factorBarTop"><span class="factorBarName">${escapeHtml(g.title)}</span><span>${fmt(g.avg)} <span class="muted">(n=${g.n})</span></span></div>
+          <div class="factorTrack"><div class="factorFill" style="width:${(g.avg/5*100).toFixed(0)}%; background:${barColor(g.avg)};"></div></div>
+        </div>
+      `).join('')}
+    </div>
+
+    ${borichCardHTML('locusAdmin', 'Borich 요구도 분석 (전체 응답 · ' + adminLatestRoundKey.replace('-',' - ') + '회차)',
+      borichScores(adminBorichKeys, adminLatestRows))}
+    <p class="muted" style="margin-top:-8px;">※ 매니저·선임매니저·센터장의 역할역량 문항은 서로 달라 같은 표에 함께 순위가 매겨집니다 — 직급을 넘나드는 비교보다는 팀 화면·전체 현황 화면의 역할별 분석을 우선 참고하세요.</p>
+
+    <div class="card">
+      <h2>전체 응답 목록</h2>
+      <table>
+        <thead><tr><th>이름</th><th>직급</th><th>팀</th><th>연도</th><th>회차</th><th>공통</th><th>직무</th><th>역할</th></tr></thead>
+        <tbody>
+          ${rows.slice().sort((a,b)=> new Date(b.submittedAt)-new Date(a.submittedAt)).map(r => `
+            <tr>
+              <td>${escapeHtml(r.name||'')}</td><td>${escapeHtml(r.role||'')}</td><td>${escapeHtml(r.team||'-')}</td>
+              <td>${r.year||''}</td><td>${r.round||''}</td>
+              <td>${fmt(r.commonAvg&&r.commonAvg.level)}</td><td>${fmt(r.jobAvg&&r.jobAvg.level)}</td><td>${fmt(r.roleAvg&&r.roleAvg.level)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer"><button class="btn secondary" id="backBtn3">돌아가기</button></div>
+  `;
+  app.querySelectorAll('.teamPassSaveBtn').forEach(btn => btn.onclick = async () => {
+    const team = btn.dataset.team;
+    const input = app.querySelector('.teamPassInput[data-team="' + CSS.escape(team) + '"]');
+    const val = (input.value || '').trim();
+    const msg = document.getElementById('teamPassMsg');
+    if (!val) { msg.textContent = '암호를 입력해주세요.'; msg.style.color = 'var(--red)'; return; }
+    if (val.length < 4) { msg.textContent = '암호는 4자 이상으로 설정해주세요.'; msg.style.color = 'var(--red)'; return; }
+    const current = await loadTeamPasscodes();
+    current[team] = val;
+    await saveTeamPasscodes(current);
+    msg.style.color = 'var(--green)';
+    msg.textContent = '\'' + team + '\' 팀 암호를 변경했습니다.';
+    input.value = '';
+  });
+  document.getElementById('addTeamBtn').onclick = () => {
+    const v = (document.getElementById('newTeamNameInput').value || '').trim();
+    if (!v) return;
+    if (!state.adminExtraTeams.includes(v)) state.adminExtraTeams.push(v);
+    render();
+  };
+  document.getElementById('changeAdminPwBtn').onclick = async () => {
+    const v1 = document.getElementById('newAdminPw1').value;
+    const v2 = document.getElementById('newAdminPw2').value;
+    const msg = document.getElementById('adminPwMsg');
+    if (!v1 || v1.length < 4) { msg.style.color = 'var(--red)'; msg.textContent = '암호는 4자 이상으로 설정해주세요.'; return; }
+    if (v1 !== v2) { msg.style.color = 'var(--red)'; msg.textContent = '두 암호가 서로 다릅니다.'; return; }
+    await saveAdminPasscode(v1);
+    msg.style.color = 'var(--green)';
+    msg.textContent = '센터장 암호를 변경했습니다. 다음 접속부터 새 암호를 사용하세요.';
+    document.getElementById('newAdminPw1').value = '';
+    document.getElementById('newAdminPw2').value = '';
+  };
+  document.getElementById('backBtn3').onclick = () => { state.screen = 'start'; render(); };
+
+  document.getElementById('exportJsonBtn').onclick = async () => {
+    const msg = document.getElementById('exportMsg');
+    const downloads = await getDownloads();
+    if (!downloads) { msg.style.color = 'var(--red)'; msg.textContent = '이 화면에서는 파일 저장 기능을 쓸 수 없습니다.'; return; }
+    const stamp = new Date().toISOString().slice(0,10);
+    try {
+      await downloads.save({ filename: `역량진단_백업_${stamp}.json`, data: JSON.stringify(rows, null, 2) });
+      msg.style.color = 'var(--green)'; msg.textContent = '백업 파일을 저장했습니다.';
+    } catch (e) {
+      if (e && e.code === 'declined') { msg.textContent = ''; return; }
+      msg.style.color = 'var(--red)'; msg.textContent = '저장에 실패했습니다 (' + (e && e.code || '알 수 없는 오류') + ').';
+    }
+  };
+  document.getElementById('exportCsvBtn').onclick = async () => {
+    const msg = document.getElementById('exportMsg');
+    const downloads = await getDownloads();
+    if (!downloads) { msg.style.color = 'var(--red)'; msg.textContent = '이 화면에서는 파일 저장 기능을 쓸 수 없습니다.'; return; }
+    const header = ['이름','직급','팀','연도','회차','제출일','공통역량','직무역량','역할역량'];
+    const csvRows = [header.join(',')];
+    rows.slice().sort((a,b)=> new Date(a.submittedAt)-new Date(b.submittedAt)).forEach(r => {
+      const line = [r.name, r.role, r.team||'', r.year, r.round,
+        r.submittedAt ? new Date(r.submittedAt).toLocaleString('ko-KR') : '',
+        fmt(r.commonAvg&&r.commonAvg.level), fmt(r.jobAvg&&r.jobAvg.level), fmt(r.roleAvg&&r.roleAvg.level)]
+        .map(v => `"${String(v==null?'':v).replace(/"/g,'""')}"`).join(',');
+      csvRows.push(line);
+    });
+    const csv = '\uFEFF' + csvRows.join('\r\n');
+    const stamp = new Date().toISOString().slice(0,10);
+    try {
+      await downloads.save({ filename: `역량진단_요약_${stamp}.csv`, data: csv });
+      msg.style.color = 'var(--green)'; msg.textContent = 'CSV 파일을 저장했습니다.';
+    } catch (e) {
+      if (e && e.code === 'declined') { msg.textContent = ''; return; }
+      msg.style.color = 'var(--red)'; msg.textContent = '저장에 실패했습니다 (' + (e && e.code || '알 수 없는 오류') + ').';
+    }
+  };
+}
+
+// ================= 시작 =================
+initDb().finally(() => render());
+render();
+</script>
+</body>
+</html>
